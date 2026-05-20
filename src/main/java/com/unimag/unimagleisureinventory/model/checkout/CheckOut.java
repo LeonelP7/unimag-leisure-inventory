@@ -1,7 +1,8 @@
-package com.unimag.unimagleisureinventory.model;
+package com.unimag.unimagleisureinventory.model.checkout;
 
 import com.unimag.unimagleisureinventory.model.enums.CheckOutStatus;
 import com.unimag.unimagleisureinventory.model.enums.ItemCondition;
+import com.unimag.unimagleisureinventory.model.reservation.Reservation;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

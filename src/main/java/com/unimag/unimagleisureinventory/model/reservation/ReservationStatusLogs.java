@@ -1,7 +1,7 @@
-package com.unimag.unimagleisureinventory.model.item;
+package com.unimag.unimagleisureinventory.model.reservation;
 
 import com.unimag.unimagleisureinventory.model.Person;
-import com.unimag.unimagleisureinventory.model.enums.ItemCondition;
+import com.unimag.unimagleisureinventory.model.enums.ReservationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,22 +11,23 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
-public class ItemCondigionLogs {
+public class ReservationStatusLogs {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(updatable = false, nullable = false)
-    private UUID itemConditionLogId;
+    private UUID reservationStatusLogId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reservation_id", nullable = false)
+    private Reservation reservation;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clerk_id", nullable = false)
-    private Person registeredBy;
+    private Person triggeredBy;
     @Enumerated(EnumType.STRING)
-    private ItemCondition previousCondition;
+    private ReservationStatus previousStatus;
     @Enumerated(EnumType.STRING)
-    private ItemCondition newCondition;
+    private ReservationStatus newStatus;
     private LocalDateTime recordedAt;
-    private String notes;
 }
