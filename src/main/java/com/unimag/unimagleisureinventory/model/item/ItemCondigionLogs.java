@@ -1,6 +1,6 @@
 package com.unimag.unimagleisureinventory.model.item;
 
-import com.unimag.unimagleisureinventory.model.Person;
+import com.unimag.unimagleisureinventory.model.person.Person;
 import com.unimag.unimagleisureinventory.model.enums.ItemCondition;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

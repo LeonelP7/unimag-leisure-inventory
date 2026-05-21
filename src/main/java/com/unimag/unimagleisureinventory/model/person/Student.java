@@ -1,11 +1,9 @@
-package com.unimag.unimagleisureinventory.model;
+package com.unimag.unimagleisureinventory.model.person;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -17,6 +15,6 @@ public class Student {
     @JoinColumn(name = "person_id", nullable = false)
     private Person person;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long studentId;
+    @Column(nullable = false, unique = true)
+    private Long studentId;
 }

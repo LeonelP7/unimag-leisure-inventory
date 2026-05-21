@@ -1,6 +1,6 @@
 package com.unimag.unimagleisureinventory.model.reservation;
 
-import com.unimag.unimagleisureinventory.model.Person;
+import com.unimag.unimagleisureinventory.model.person.Person;
 import com.unimag.unimagleisureinventory.model.enums.ReservationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

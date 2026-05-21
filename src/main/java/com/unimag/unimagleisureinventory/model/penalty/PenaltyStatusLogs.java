@@ -1,7 +1,7 @@
-package com.unimag.unimagleisureinventory.model.item;
+package com.unimag.unimagleisureinventory.model.penalty;
 
+import com.unimag.unimagleisureinventory.model.enums.PenaltyStatus;
 import com.unimag.unimagleisureinventory.model.person.Person;
-import com.unimag.unimagleisureinventory.model.enums.ItemStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,20 +14,21 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class ItemStatusLogs {
+public class PenaltyStatusLogs {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(updatable = false, nullable = false)
-    private UUID itemStatusLogId;
+    private UUID penaltyStatusLogsId;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id", nullable = false)
-    private Item item;
+    @JoinColumn(name = "penalty_id", nullable = false)
+    private Penalty penalty;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clerk_id", nullable = false)
     private Person triggeredBy;
     @Enumerated(EnumType.STRING)
-    private ItemStatus previousStatus;
+    private PenaltyStatus previousStatus;
     @Enumerated(EnumType.STRING)
-    private ItemStatus newStatus;
+    private PenaltyStatus newStatus;
     private LocalDateTime recordedAt;
 }

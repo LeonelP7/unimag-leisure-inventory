@@ -1,5 +1,7 @@
-package com.unimag.unimagleisureinventory.model;
+package com.unimag.unimagleisureinventory.model.penalty;
 
+import com.unimag.unimagleisureinventory.model.enums.PenaltyStatus;
+import com.unimag.unimagleisureinventory.model.person.Student;
 import com.unimag.unimagleisureinventory.model.checkout.CheckOut;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -31,4 +33,6 @@ public class Penalty {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="penalty_type_id", nullable=false)
     private PenaltyType penaltyType;
+    @Enumerated(EnumType.STRING)
+    private PenaltyStatus penaltyStatus;
 }

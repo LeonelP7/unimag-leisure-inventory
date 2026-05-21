@@ -1,4 +1,4 @@
-package com.unimag.unimagleisureinventory.model;
+package com.unimag.unimagleisureinventory.model.person;
 
 import com.unimag.unimagleisureinventory.model.enums.Role;
 import jakarta.persistence.*;

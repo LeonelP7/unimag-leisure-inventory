@@ -1,4 +1,4 @@
-package com.unimag.unimagleisureinventory.model;
+package com.unimag.unimagleisureinventory.model.penalty;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
