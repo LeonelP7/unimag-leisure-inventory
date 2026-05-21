@@ -21,6 +21,9 @@ public class ItemCondigionLogs {
     @Column(updatable = false, nullable = false)
     private UUID itemConditionLogId;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id", nullable = false)
+    private Item item;
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clerk_id", nullable = false)
     private Person registeredBy;
     @Enumerated(EnumType.STRING)
