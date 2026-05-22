@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/person")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PersonResponseDTO> createPerson(
             @Valid @RequestBody CreatePersonRequestDTO request) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -30,6 +32,7 @@ public class UserController {
     }
 
     @PostMapping("/student")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<StudentResponseDTO> createStudent(
             @Valid @RequestBody CreateStudentRequestDTO request) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -37,12 +40,14 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<PersonResponseDTO>> getByRole(
             @RequestParam Role role) {
         return ResponseEntity.ok(userService.getByRole(role));
     }
 
     @PutMapping("/{personId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PersonResponseDTO> updatePerson(
             @PathVariable UUID personId,
             @Valid @RequestBody CreatePersonRequestDTO request) {
@@ -50,6 +55,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{personId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deletePerson(@PathVariable UUID personId) {
         userService.deletePerson(personId);
         return ResponseEntity.noContent().build();

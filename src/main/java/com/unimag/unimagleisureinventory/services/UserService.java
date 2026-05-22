@@ -4,90 +4,15 @@ import com.unimag.unimagleisureinventory.dtos.person.CreatePersonRequestDTO;
 import com.unimag.unimagleisureinventory.dtos.person.PersonResponseDTO;
 import com.unimag.unimagleisureinventory.dtos.student.CreateStudentRequestDTO;
 import com.unimag.unimagleisureinventory.dtos.student.StudentResponseDTO;
-import com.unimag.unimagleisureinventory.mappers.PersonMapper;
-import com.unimag.unimagleisureinventory.mappers.StudentMapper;
 import com.unimag.unimagleisureinventory.model.enums.Role;
-import com.unimag.unimagleisureinventory.model.person.Person;
-import com.unimag.unimagleisureinventory.model.person.Student;
-import com.unimag.unimagleisureinventory.repositories.PersonRepository;
-import com.unimag.unimagleisureinventory.repositories.StudentRepository;
-
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
-@Service
-@RequiredArgsConstructor
-public class UserService {
-
-    private final PersonRepository personRepository;
-    private final StudentRepository studentRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final PersonMapper personMapper;
-    private final StudentMapper studentMapper;
-
-    public PersonResponseDTO createPerson(CreatePersonRequestDTO request) {
-        if (personRepository.existsByEmail(request.email())) {
-            throw new RuntimeException("Email already in use");
-        }
-
-        Person person = personMapper.toEntity(request);
-        person.setPassword(passwordEncoder.encode(request.password()));
-        person.setRole(request.role());
-
-        return personMapper.toResponseDTO(personRepository.save(person));
-    }
-
-    @Transactional
-    public StudentResponseDTO createStudent(CreateStudentRequestDTO request) {
-        if (personRepository.existsByEmail(request.email())) {
-            throw new RuntimeException("Email already in use");
-        }
-        if (studentRepository.existsById(request.studentId())) {
-            throw new RuntimeException("Student ID already registered");
-        }
-
-        Person person = new Person();
-        person.setFirstName(request.firstName());
-        person.setLastName(request.lastName());
-        person.setEmail(request.email());
-        person.setPassword(passwordEncoder.encode(request.password()));
-        person.setRole(Role.STUDENT);
-
-        Student student = new Student();
-        student.setStudentId(request.studentId());
-        student.setPerson(personRepository.save(person));
-
-        return studentMapper.toResponseDTO(studentRepository.save(student));
-    }
-
-    public List<PersonResponseDTO> getByRole(Role role) {
-        return personRepository.findByRole(role)
-                .stream()
-                .map(personMapper::toResponseDTO)
-                .toList();
-    }
-
-    public PersonResponseDTO updatePerson(UUID personId, CreatePersonRequestDTO request) {
-        Person person = personRepository.findById(personId)
-                .orElseThrow(() -> new RuntimeException("Person not found"));
-
-        person.setFirstName(request.firstName());
-        person.setLastName(request.lastName());
-        person.setEmail(request.email());
-        person.setPassword(passwordEncoder.encode(request.password()));
-
-        return personMapper.toResponseDTO(personRepository.save(person));
-    }
-
-    public void deletePerson(UUID personId) {
-        if (!personRepository.existsById(personId)) {
-            throw new RuntimeException("Person not found");
-        }
-        personRepository.deleteById(personId);
-    }
+public interface UserService {
+    PersonResponseDTO createPerson(CreatePersonRequestDTO request);
+    StudentResponseDTO createStudent(CreateStudentRequestDTO request);
+    List<PersonResponseDTO> getByRole(Role role);
+    PersonResponseDTO updatePerson(UUID personId, CreatePersonRequestDTO request);
+    void deletePerson(UUID personId);
 }
