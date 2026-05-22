@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -15,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -27,12 +29,6 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/items/**").hasAnyRole("ADMIN", "INVENTORY_CLERK", "STUDENT")
-                        .requestMatchers("/checkouts/**").hasAnyRole("ADMIN", "INVENTORY_CLERK")
-                        .requestMatchers("/reservations/**").hasAnyRole("ADMIN", "INVENTORY_CLERK", "STUDENT")
-                        .requestMatchers("/penalties/**").hasAnyRole("ADMIN", "INVENTORY_CLERK")
-                        .requestMatchers("/reports/**").hasAnyRole("ADMIN", "INVENTORY_CLERK")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -42,7 +38,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10); // RNF-09: factor de costo mínimo 10
+        return new BCryptPasswordEncoder(10);
     }
 
     @Bean
