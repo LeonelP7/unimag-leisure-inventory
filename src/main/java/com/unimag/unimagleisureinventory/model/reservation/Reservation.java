@@ -20,8 +20,7 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(updatable = false, nullable = false)
     private UUID id;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private LocalDateTime reservationTime;
     private LocalDateTime claimDeadline;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id", nullable = false)
