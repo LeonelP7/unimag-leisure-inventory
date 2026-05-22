@@ -18,7 +18,7 @@ public class CheckOut {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(updatable = false, nullable = false)
-    private UUID chekOutId;
+    private UUID checkOutId;
     private LocalDateTime checkOutDate;
     private LocalDateTime dueDate;
     private LocalDateTime checkInDate;

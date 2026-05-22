@@ -21,15 +21,24 @@ public class JwtUtil {
     @Value("${jwt.expiration}")
     private long expiration;
 
-    public String generateToken(Person person) {
-        return Jwts.builder()
+    public String generateToken(Person person, Long studentId) {
+        var builder = Jwts.builder()
                 .subject(person.getEmail())
                 .claim("role", person.getRole().name())
                 .claim("personId", person.getPersonId().toString())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(getSigningKey())
-                .compact();
+                .signWith(getSigningKey());
+
+        if (studentId != null) {
+            builder.claim("studentId", studentId);
+        }
+
+        return builder.compact();
+    }
+
+    public Long extractStudentId(String token) {
+        return getClaims(token).get("studentId", Long.class);
     }
 
     public String extractEmail(String token) {
