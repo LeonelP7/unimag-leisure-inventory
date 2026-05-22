@@ -1,4 +1,4 @@
-package com.unimag.unimagleisureinventory.dtos;
+package com.unimag.unimagleisureinventory.dtos.login;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
