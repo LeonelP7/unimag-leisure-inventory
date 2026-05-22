@@ -1,8 +1,8 @@
 package com.unimag.unimagleisureinventory.services;
 
 import com.unimag.unimagleisureinventory.config.security.JwtUtil;
-import com.unimag.unimagleisureinventory.dtos.LoginRequestDTO;
-import com.unimag.unimagleisureinventory.dtos.LoginResponseDTO;
+import com.unimag.unimagleisureinventory.dtos.login.LoginRequestDTO;
+import com.unimag.unimagleisureinventory.dtos.login.LoginResponseDTO;
 import com.unimag.unimagleisureinventory.model.person.Person;
 import com.unimag.unimagleisureinventory.repositories.PersonRepository;
 import lombok.RequiredArgsConstructor;

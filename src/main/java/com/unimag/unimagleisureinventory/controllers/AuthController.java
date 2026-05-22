@@ -1,7 +1,7 @@
 package com.unimag.unimagleisureinventory.controllers;
 
-import com.unimag.unimagleisureinventory.dtos.LoginRequestDTO;
-import com.unimag.unimagleisureinventory.dtos.LoginResponseDTO;
+import com.unimag.unimagleisureinventory.dtos.login.LoginRequestDTO;
+import com.unimag.unimagleisureinventory.dtos.login.LoginResponseDTO;
 import com.unimag.unimagleisureinventory.services.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
