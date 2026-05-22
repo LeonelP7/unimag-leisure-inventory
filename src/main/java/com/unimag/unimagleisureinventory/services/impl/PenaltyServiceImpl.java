@@ -1,0 +1,94 @@
+package com.unimag.unimagleisureinventory.services.impl;
+
+import com.unimag.unimagleisureinventory.dtos.CreatePenaltyRequestDTO;
+import com.unimag.unimagleisureinventory.dtos.PenaltyResponseDTO;
+import com.unimag.unimagleisureinventory.dtos.ResolvePenaltyRequestDTO;
+import com.unimag.unimagleisureinventory.mappers.PenaltyMapper;
+import com.unimag.unimagleisureinventory.model.checkout.CheckOut;
+import com.unimag.unimagleisureinventory.model.enums.PenaltyStatus;
+import com.unimag.unimagleisureinventory.model.penalty.Penalty;
+import com.unimag.unimagleisureinventory.model.penalty.PenaltyType;
+import com.unimag.unimagleisureinventory.model.person.Student;
+import com.unimag.unimagleisureinventory.repositories.CheckOutRepository;
+import com.unimag.unimagleisureinventory.repositories.PenaltyRepository;
+import com.unimag.unimagleisureinventory.repositories.PenaltyTypeRepository;
+import com.unimag.unimagleisureinventory.repositories.StudentRepository;
+import com.unimag.unimagleisureinventory.services.PenaltyService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class PenaltyServiceImpl implements PenaltyService {
+
+    private final PenaltyRepository penaltyRepository;
+    private final StudentRepository studentRepository;
+    private final CheckOutRepository checkOutRepository;
+    private final PenaltyTypeRepository penaltyTypeRepository;
+    private final PenaltyMapper penaltyMapper;
+
+    // RF-21/RF-22 — activar sanción manualmente
+    @Transactional
+    public PenaltyResponseDTO create(CreatePenaltyRequestDTO request) {
+
+        // verificar que no tenga ya una sanción activa
+        if (penaltyRepository.existsByStudent_IdAndStatus(
+                request.studentId(), PenaltyStatus.ACTIVE)) {
+            throw new RuntimeException("Student already has an active penalty");
+        }
+
+        Student student = studentRepository.findById(request.studentId())
+                .orElseThrow(() -> new RuntimeException("Student not found"));
+
+        CheckOut checkOut = checkOutRepository.findById(request.checkOutId())
+                .orElseThrow(() -> new RuntimeException("CheckOut not found"));
+
+        PenaltyType penaltyType = penaltyTypeRepository.findById(request.penaltyTypeId())
+                .orElseThrow(() -> new RuntimeException("Penalty type not found"));
+
+        Penalty penalty = new Penalty();
+        penalty.setStudent(student);
+        penalty.setCheckOut(checkOut);
+        penalty.setPenaltyType(penaltyType);
+        penalty.setReason(request.reason());
+        penalty.setStartDate(LocalDateTime.now());
+        penalty.setPenaltyStatus(PenaltyStatus.ACTIVE);
+
+        return penaltyMapper.toResponseDTO(penaltyRepository.save(penalty));
+    }
+
+    // RF-24 — cerrar sanción
+    @Transactional
+    public PenaltyResponseDTO resolve(UUID penaltyId, ResolvePenaltyRequestDTO request) {
+        Penalty penalty = penaltyRepository.findById(penaltyId)
+                .orElseThrow(() -> new RuntimeException("Penalty not found"));
+
+        if (penalty.getPenaltyStatus() != PenaltyStatus.ACTIVE) {
+            throw new RuntimeException("Penalty is not active");
+        }
+
+        penalty.setPenaltyStatus(PenaltyStatus.RESOLVED);
+        penalty.setEndDate(LocalDateTime.now());
+
+        return penaltyMapper.toResponseDTO(penaltyRepository.save(penalty));
+    }
+
+    // RF-29 — historial de sanciones del estudiante
+    public List<PenaltyResponseDTO> getByStudent(Long studentId) {
+        return penaltyRepository.findByStudent_Id(studentId)
+                .stream()
+                .map(penaltyMapper::toResponseDTO)
+                .toList();
+    }
+
+    // RF-25 — verificar sanción activa
+    public boolean hasActivePenalty(Long studentId) {
+        return penaltyRepository.existsByStudent_IdAndStatus(
+                studentId, PenaltyStatus.ACTIVE);
+    }
+}
