@@ -21,4 +21,6 @@ public interface CheckOutRepository extends CrudRepository<CheckOut, UUID> {
 
     // Verificar si un item está actualmente en préstamo
     boolean existsByReservation_Item_ItemIdAndStatus(UUID itemId, CheckOutStatus status);
+
+    List<CheckOut> findByCheckOutDateBetween(LocalDateTime from, LocalDateTime to);
 }
