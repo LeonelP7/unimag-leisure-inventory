@@ -1,7 +1,7 @@
 package com.unimag.unimagleisureinventory.mappers;
 
-import com.unimag.unimagleisureinventory.dtos.CreatePenaltyRequestDTO;
-import com.unimag.unimagleisureinventory.dtos.PenaltyResponseDTO;
+import com.unimag.unimagleisureinventory.dtos.penalty.CreatePenaltyRequestDTO;
+import com.unimag.unimagleisureinventory.dtos.penalty.PenaltyResponseDTO;
 import com.unimag.unimagleisureinventory.model.penalty.Penalty;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -1,4 +1,4 @@
-package com.unimag.unimagleisureinventory.dtos;
+package com.unimag.unimagleisureinventory.dtos.penalty;
 
 import com.unimag.unimagleisureinventory.dtos.student.StudentResponseDTO;
 import com.unimag.unimagleisureinventory.model.enums.PenaltyStatus;
