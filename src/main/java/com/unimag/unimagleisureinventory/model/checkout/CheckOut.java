@@ -2,6 +2,7 @@ package com.unimag.unimagleisureinventory.model.checkout;
 
 import com.unimag.unimagleisureinventory.model.enums.CheckOutStatus;
 import com.unimag.unimagleisureinventory.model.enums.ItemCondition;
+import com.unimag.unimagleisureinventory.model.person.Student;
 import com.unimag.unimagleisureinventory.model.reservation.Reservation;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,4 +30,7 @@ public class CheckOut {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id", nullable = true)
     private Reservation reservation;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "student_id", nullable = false)
+    private Student student;
 }

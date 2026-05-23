@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -78,7 +79,8 @@ public class CheckOutServiceImpl implements CheckOutService {
                 ? reservationRepository.findById(request.reservationId()).get()
                 : null);
         checkOut.setCheckOutDate(LocalDateTime.now());
-        checkOut.setDueDate(LocalDateTime.now().plusHours(4));
+        checkOut.setStudent(student);
+        checkOut.setDueDate(calculateDueDate(LocalDateTime.now()));
         checkOut.setStatus(CheckOutStatus.ACTIVE);
 
         itemRepository.decrementAvailableQuantity(item.getItemId());
@@ -159,5 +161,23 @@ public class CheckOutServiceImpl implements CheckOutService {
         penalty.setPenaltyStatus(PenaltyStatus.ACTIVE);
 
         penaltyRepository.save(penalty);
+    }
+
+    private LocalDateTime calculateDueDate(LocalDateTime checkOutDate) {
+        LocalTime checkOutTime = checkOutDate.toLocalTime();
+        LocalTime morningClose = LocalTime.of(12, 0);
+        LocalTime afternoonOpen = LocalTime.of(14, 0);
+        LocalTime afternoonClose = LocalTime.of(18, 0);
+
+        if (checkOutTime.isBefore(morningClose)) {
+            // prestado en la mañana → devolver a las 12pm
+            return checkOutDate.toLocalDate().atTime(morningClose);
+        } else if (checkOutTime.isAfter(afternoonOpen) || checkOutTime.equals(afternoonOpen)) {
+            // prestado en la tarde → devolver a las 6pm
+            return checkOutDate.toLocalDate().atTime(afternoonClose);
+        } else {
+            // prestado entre 12pm y 2pm — no debería ocurrir
+            throw new RuntimeException("Service is closed between 12:00 and 14:00");
+        }
     }
 }
