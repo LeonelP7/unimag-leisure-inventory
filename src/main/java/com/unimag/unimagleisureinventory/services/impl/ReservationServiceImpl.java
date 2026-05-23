@@ -3,6 +3,9 @@ package com.unimag.unimagleisureinventory.services.impl;
 import com.unimag.unimagleisureinventory.dtos.reservation.ApproveReservationRequestDTO;
 import com.unimag.unimagleisureinventory.dtos.reservation.CreateReservationRequestDTO;
 import com.unimag.unimagleisureinventory.dtos.reservation.ReservationResponseDTO;
+import com.unimag.unimagleisureinventory.exceptions.BusinessException;
+import com.unimag.unimagleisureinventory.exceptions.ResourceNotFoundException;
+import com.unimag.unimagleisureinventory.exceptions.UnauthorizedException;
 import com.unimag.unimagleisureinventory.mappers.ReservationMapper;
 import com.unimag.unimagleisureinventory.model.enums.ReservationStatus;
 import com.unimag.unimagleisureinventory.model.item.Item;
@@ -35,17 +38,17 @@ public class ReservationServiceImpl implements ReservationService {
         boolean hasActive = reservationRepository.existsByStudent_IdAndStatus(
                 studentId, ReservationStatus.ACCEPTED);
         if (hasActive) {
-            throw new RuntimeException("Student already has an active loan");
+            throw new BusinessException("Student already has an active loan");
         }
 
         Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
 
         Item item = itemRepository.findById(request.itemId())
-                .orElseThrow(() -> new RuntimeException("Item not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found"));
 
         if (item.getAvailableQuantity() <= 0) {
-            throw new RuntimeException("Item not available");
+            throw new BusinessException("Item not available");
         }
 
         Reservation reservation = new Reservation();
@@ -70,14 +73,14 @@ public class ReservationServiceImpl implements ReservationService {
     @Transactional
     public void cancel(UUID reservationId, Long studentId) {
         Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new RuntimeException("Reservation not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Reservation not found"));
 
         if (!reservation.getStudent().getStudentId().equals(studentId)) {
-            throw new RuntimeException("Unauthorized");
+            throw new UnauthorizedException("Unauthorized");
         }
 
         if (reservation.getStatus() != ReservationStatus.PENDING) {
-            throw new RuntimeException("Only pending reservations can be cancelled");
+            throw new BusinessException("Only pending reservations can be cancelled");
         }
 
         reservation.setStatus(ReservationStatus.CANCELLED);
@@ -88,7 +91,7 @@ public class ReservationServiceImpl implements ReservationService {
     public ReservationResponseDTO verify(UUID reservationId) {
         return reservationMapper.toResponseDTO(
                 reservationRepository.findById(reservationId)
-                        .orElseThrow(() -> new RuntimeException("Reservation not found"))
+                        .orElseThrow(() -> new ResourceNotFoundException("Reservation not found"))
         );
     }
 
@@ -96,10 +99,10 @@ public class ReservationServiceImpl implements ReservationService {
     @Transactional
     public ReservationResponseDTO approve(UUID reservationId, ApproveReservationRequestDTO request) {
         Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new RuntimeException("Reservation not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Reservation not found"));
 
         if (reservation.getStatus() != ReservationStatus.PENDING) {
-            throw new RuntimeException("Only pending reservations can be approved");
+            throw new BusinessException("Only pending reservations can be approved");
         }
 
         if (request.approved()) {

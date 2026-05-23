@@ -2,6 +2,8 @@ package com.unimag.unimagleisureinventory.services.impl;
 
 import com.unimag.unimagleisureinventory.dtos.penalty.CreatePenaltyTypeRequestDTO;
 import com.unimag.unimagleisureinventory.dtos.penalty.PenaltyTypeResponseDTO;
+import com.unimag.unimagleisureinventory.exceptions.BusinessException;
+import com.unimag.unimagleisureinventory.exceptions.ResourceNotFoundException;
 import com.unimag.unimagleisureinventory.mappers.PenaltyTypeMapper;
 import com.unimag.unimagleisureinventory.model.penalty.PenaltyType;
 import com.unimag.unimagleisureinventory.repositories.PenaltyTypeRepository;
@@ -28,7 +30,7 @@ public class PenaltyTypeServiceImpl implements PenaltyTypeService {
 
     public PenaltyTypeResponseDTO create(CreatePenaltyTypeRequestDTO request) {
         if (penaltyTypeRepository.existsByName(request.name())) {
-            throw new RuntimeException("Penalty type already exists");
+            throw new BusinessException("Penalty type already exists");
         }
         return penaltyTypeMapper.toResponseDTO(
                 penaltyTypeRepository.save(penaltyTypeMapper.toEntity(request))
@@ -37,10 +39,10 @@ public class PenaltyTypeServiceImpl implements PenaltyTypeService {
 
     public PenaltyTypeResponseDTO update(UUID id, CreatePenaltyTypeRequestDTO request) {
         PenaltyType penaltyType = penaltyTypeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Penalty type not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Penalty type not found"));
 
         if (penaltyTypeRepository.existsByName(request.name())) {
-            throw new RuntimeException("Penalty type name already in use");
+            throw new BusinessException("Penalty type name already in use");
         }
 
         penaltyType.setName(request.name());
@@ -49,7 +51,7 @@ public class PenaltyTypeServiceImpl implements PenaltyTypeService {
 
     public void delete(UUID id) {
         if (!penaltyTypeRepository.existsById(id)) {
-            throw new RuntimeException("Penalty type not found");
+            throw new ResourceNotFoundException("Penalty type not found");
         }
         penaltyTypeRepository.deleteById(id);
     }
