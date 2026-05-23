@@ -1,4 +1,4 @@
-package com.unimag.unimagleisureinventory.dtos;
+package com.unimag.unimagleisureinventory.dtos.penalty;
 
 import java.util.UUID;
 

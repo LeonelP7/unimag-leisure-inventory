@@ -1,8 +1,8 @@
 package com.unimag.unimagleisureinventory.services;
 
-import com.unimag.unimagleisureinventory.dtos.CreatePenaltyRequestDTO;
-import com.unimag.unimagleisureinventory.dtos.PenaltyResponseDTO;
-import com.unimag.unimagleisureinventory.dtos.ResolvePenaltyRequestDTO;
+import com.unimag.unimagleisureinventory.dtos.penalty.CreatePenaltyRequestDTO;
+import com.unimag.unimagleisureinventory.dtos.penalty.PenaltyResponseDTO;
+import com.unimag.unimagleisureinventory.dtos.penalty.ResolvePenaltyRequestDTO;
 
 import java.util.List;
 import java.util.UUID;

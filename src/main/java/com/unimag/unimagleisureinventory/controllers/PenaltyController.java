@@ -1,9 +1,9 @@
 package com.unimag.unimagleisureinventory.controllers;
 
 import com.unimag.unimagleisureinventory.config.security.SecurityUtils;
-import com.unimag.unimagleisureinventory.dtos.CreatePenaltyRequestDTO;
-import com.unimag.unimagleisureinventory.dtos.PenaltyResponseDTO;
-import com.unimag.unimagleisureinventory.dtos.ResolvePenaltyRequestDTO;
+import com.unimag.unimagleisureinventory.dtos.penalty.CreatePenaltyRequestDTO;
+import com.unimag.unimagleisureinventory.dtos.penalty.PenaltyResponseDTO;
+import com.unimag.unimagleisureinventory.dtos.penalty.ResolvePenaltyRequestDTO;
 import com.unimag.unimagleisureinventory.services.PenaltyService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
