@@ -3,6 +3,8 @@ package com.unimag.unimagleisureinventory.services.impl;
 import com.unimag.unimagleisureinventory.dtos.checkout.CheckInRequestDTO;
 import com.unimag.unimagleisureinventory.dtos.checkout.CheckOutResponseDTO;
 import com.unimag.unimagleisureinventory.dtos.checkout.CreateCheckOutRequestDTO;
+import com.unimag.unimagleisureinventory.exceptions.BusinessException;
+import com.unimag.unimagleisureinventory.exceptions.ResourceNotFoundException;
 import com.unimag.unimagleisureinventory.mappers.CheckOutMapper;
 import com.unimag.unimagleisureinventory.model.checkout.CheckOut;
 import com.unimag.unimagleisureinventory.model.enums.CheckOutStatus;
@@ -43,7 +45,7 @@ public class CheckOutServiceImpl implements CheckOutService {
     public CheckOutResponseDTO create(CreateCheckOutRequestDTO request) {
 
         if (request.reservationId() == null && request.itemId() == null) {
-            throw new RuntimeException("Either reservationId or itemId must be provided");
+            throw new BusinessException("Either reservationId or itemId must be provided");
         }
 
         Item item;
@@ -52,10 +54,10 @@ public class CheckOutServiceImpl implements CheckOutService {
         if (request.reservationId() != null) {
             // viene de una reserva
             Reservation reservation = reservationRepository.findById(request.reservationId())
-                    .orElseThrow(() -> new RuntimeException("Reservation not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Reservation not found"));
 
             if (reservation.getStatus() != ReservationStatus.ACCEPTED) {
-                throw new RuntimeException("Reservation must be accepted before checkout");
+                throw new BusinessException("Reservation must be accepted before checkout");
             }
 
             item = reservation.getItem();
@@ -64,14 +66,14 @@ public class CheckOutServiceImpl implements CheckOutService {
         } else {
             // préstamo directo sin reserva
             item = itemRepository.findById(request.itemId())
-                    .orElseThrow(() -> new RuntimeException("Item not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Item not found"));
 
             if (item.getAvailableQuantity() <= 0) {
-                throw new RuntimeException("Item not available");
+                throw new BusinessException("Item not available");
             }
 
             student = studentRepository.findById(request.studentId())
-                    .orElseThrow(() -> new RuntimeException("Student not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
         }
 
         CheckOut checkOut = new CheckOut();
@@ -92,10 +94,10 @@ public class CheckOutServiceImpl implements CheckOutService {
     @Transactional
     public CheckOutResponseDTO checkIn(UUID checkOutId, CheckInRequestDTO request) {
         CheckOut checkOut = checkOutRepository.findById(checkOutId)
-                .orElseThrow(() -> new RuntimeException("CheckOut not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("CheckOut not found"));
 
         if (checkOut.getStatus() != CheckOutStatus.ACTIVE) {
-            throw new RuntimeException("CheckOut is not active");
+            throw new BusinessException("CheckOut is not active");
         }
 
         checkOut.setCheckInDate(LocalDateTime.now());
@@ -118,7 +120,7 @@ public class CheckOutServiceImpl implements CheckOutService {
     @Transactional
     public CheckOutResponseDTO updateCondition(UUID checkOutId, CheckInRequestDTO request) {
         CheckOut checkOut = checkOutRepository.findById(checkOutId)
-                .orElseThrow(() -> new RuntimeException("CheckOut not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("CheckOut not found"));
 
         checkOut.setReturnedItemCondition(request.returnedItemCondition());
 
@@ -148,7 +150,7 @@ public class CheckOutServiceImpl implements CheckOutService {
 
         Optional<PenaltyType> penaltyTypeOpt = penaltyTypeRepository.findByName(penaltyTypeName);
         PenaltyType penaltyType = penaltyTypeOpt
-                .orElseThrow(() -> new RuntimeException("Penalty type not found: " + penaltyTypeName));
+                .orElseThrow(() -> new ResourceNotFoundException("Penalty type not found: " + penaltyTypeName));
 
         Penalty penalty = new Penalty();
         penalty.setStudent(checkOut.getReservation().getStudent());
@@ -177,7 +179,7 @@ public class CheckOutServiceImpl implements CheckOutService {
             return checkOutDate.toLocalDate().atTime(afternoonClose);
         } else {
             // prestado entre 12pm y 2pm — no debería ocurrir
-            throw new RuntimeException("Service is closed between 12:00 and 14:00");
+            throw new BusinessException("Service is closed between 12:00 and 14:00");
         }
     }
 }

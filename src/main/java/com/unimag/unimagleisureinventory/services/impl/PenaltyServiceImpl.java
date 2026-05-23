@@ -3,6 +3,8 @@ package com.unimag.unimagleisureinventory.services.impl;
 import com.unimag.unimagleisureinventory.dtos.penalty.CreatePenaltyRequestDTO;
 import com.unimag.unimagleisureinventory.dtos.penalty.PenaltyResponseDTO;
 import com.unimag.unimagleisureinventory.dtos.penalty.ResolvePenaltyRequestDTO;
+import com.unimag.unimagleisureinventory.exceptions.BusinessException;
+import com.unimag.unimagleisureinventory.exceptions.ResourceNotFoundException;
 import com.unimag.unimagleisureinventory.mappers.PenaltyMapper;
 import com.unimag.unimagleisureinventory.model.checkout.CheckOut;
 import com.unimag.unimagleisureinventory.model.enums.PenaltyStatus;
@@ -39,17 +41,17 @@ public class PenaltyServiceImpl implements PenaltyService {
         // verificar que no tenga ya una sanción activa
         if (penaltyRepository.existsByStudent_IdAndStatus(
                 request.studentId(), PenaltyStatus.ACTIVE)) {
-            throw new RuntimeException("Student already has an active penalty");
+            throw new BusinessException("Student already has an active penalty");
         }
 
         Student student = studentRepository.findById(request.studentId())
-                .orElseThrow(() -> new RuntimeException("Student not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
 
         CheckOut checkOut = checkOutRepository.findById(request.checkOutId())
-                .orElseThrow(() -> new RuntimeException("CheckOut not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("CheckOut not found"));
 
         PenaltyType penaltyType = penaltyTypeRepository.findById(request.penaltyTypeId())
-                .orElseThrow(() -> new RuntimeException("Penalty type not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Penalty type not found"));
 
         Penalty penalty = new Penalty();
         penalty.setStudent(student);
@@ -66,10 +68,10 @@ public class PenaltyServiceImpl implements PenaltyService {
     @Transactional
     public PenaltyResponseDTO resolve(UUID penaltyId, ResolvePenaltyRequestDTO request) {
         Penalty penalty = penaltyRepository.findById(penaltyId)
-                .orElseThrow(() -> new RuntimeException("Penalty not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Penalty not found"));
 
         if (penalty.getPenaltyStatus() != PenaltyStatus.ACTIVE) {
-            throw new RuntimeException("Penalty is not active");
+            throw new BusinessException("Penalty is not active");
         }
 
         penalty.setPenaltyStatus(PenaltyStatus.RESOLVED);

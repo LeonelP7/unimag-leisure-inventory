@@ -4,6 +4,7 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.unimag.unimagleisureinventory.exceptions.BusinessException;
 import com.unimag.unimagleisureinventory.model.checkout.CheckOut;
 import com.unimag.unimagleisureinventory.model.penalty.Penalty;
 import com.unimag.unimagleisureinventory.repositories.CheckOutRepository;
@@ -74,7 +75,7 @@ public class ReportServiceImpl implements ReportService {
             return out.toByteArray();
 
         } catch (DocumentException e) {
-            throw new RuntimeException("Error generating PDF", e);
+            throw new BusinessException("Error generating PDF", e);
         }
     }
 
@@ -122,7 +123,7 @@ public class ReportServiceImpl implements ReportService {
             return out.toByteArray();
 
         } catch (IOException e) {
-            throw new RuntimeException("Error generating Excel", e);
+            throw new BusinessException("Error generating Excel", e);
         }
     }
 
@@ -165,7 +166,7 @@ public class ReportServiceImpl implements ReportService {
             return out.toByteArray();
 
         } catch (DocumentException e) {
-            throw new RuntimeException("Error generating PDF", e);
+            throw new BusinessException("Error generating PDF", e);
         }
     }
 
@@ -207,19 +208,19 @@ public class ReportServiceImpl implements ReportService {
             return out.toByteArray();
 
         } catch (IOException e) {
-            throw new RuntimeException("Error generating Excel", e);
+            throw new BusinessException("Error generating Excel", e);
         }
     }
 
     private void validateDateRange(LocalDateTime from, LocalDateTime to) {
         if (from == null || to == null) {
-            throw new RuntimeException("Date range is required");
+            throw new BusinessException("Date range is required");
         }
         if (from.isAfter(to)) {
-            throw new RuntimeException("Start date must be before end date");
+            throw new BusinessException("Start date must be before end date");
         }
         if (ChronoUnit.MONTHS.between(from, to) > 6) {
-            throw new RuntimeException("Date range cannot exceed 6 months");
+            throw new BusinessException("Date range cannot exceed 6 months");
         }
     }
 }

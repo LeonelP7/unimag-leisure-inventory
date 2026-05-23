@@ -4,6 +4,8 @@ import com.unimag.unimagleisureinventory.dtos.person.CreatePersonRequestDTO;
 import com.unimag.unimagleisureinventory.dtos.person.PersonResponseDTO;
 import com.unimag.unimagleisureinventory.dtos.student.CreateStudentRequestDTO;
 import com.unimag.unimagleisureinventory.dtos.student.StudentResponseDTO;
+import com.unimag.unimagleisureinventory.exceptions.BusinessException;
+import com.unimag.unimagleisureinventory.exceptions.ResourceNotFoundException;
 import com.unimag.unimagleisureinventory.mappers.PersonMapper;
 import com.unimag.unimagleisureinventory.mappers.StudentMapper;
 import com.unimag.unimagleisureinventory.model.enums.Role;
@@ -33,7 +35,7 @@ public class UserServiceImpl implements UserService {
 
     public PersonResponseDTO createPerson(CreatePersonRequestDTO request) {
         if (personRepository.existsByEmail(request.email())) {
-            throw new RuntimeException("Email already in use");
+            throw new BusinessException("Email already in use");
         }
 
         Person person = personMapper.toEntity(request);
@@ -46,10 +48,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public StudentResponseDTO createStudent(CreateStudentRequestDTO request) {
         if (personRepository.existsByEmail(request.email())) {
-            throw new RuntimeException("Email already in use");
+            throw new BusinessException("Email already in use");
         }
         if (studentRepository.existsById(request.studentId())) {
-            throw new RuntimeException("Student ID already registered");
+            throw new BusinessException("Student ID already registered");
         }
 
         Person person = new Person();
@@ -75,7 +77,7 @@ public class UserServiceImpl implements UserService {
 
     public PersonResponseDTO updatePerson(UUID personId, CreatePersonRequestDTO request) {
         Person person = personRepository.findById(personId)
-                .orElseThrow(() -> new RuntimeException("Person not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Person not found"));
 
         person.setFirstName(request.firstName());
         person.setLastName(request.lastName());
@@ -87,7 +89,7 @@ public class UserServiceImpl implements UserService {
 
     public void deletePerson(UUID personId) {
         if (!personRepository.existsById(personId)) {
-            throw new RuntimeException("Person not found");
+            throw new ResourceNotFoundException("Person not found");
         }
         personRepository.deleteById(personId);
     }

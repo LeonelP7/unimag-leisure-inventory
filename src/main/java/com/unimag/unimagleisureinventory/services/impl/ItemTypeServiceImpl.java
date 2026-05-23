@@ -2,6 +2,8 @@ package com.unimag.unimagleisureinventory.services.impl;
 
 import com.unimag.unimagleisureinventory.dtos.item.CreateItemTypeRequestDTO;
 import com.unimag.unimagleisureinventory.dtos.item.ItemTypeResponseDTO;
+import com.unimag.unimagleisureinventory.exceptions.BusinessException;
+import com.unimag.unimagleisureinventory.exceptions.ResourceNotFoundException;
 import com.unimag.unimagleisureinventory.mappers.ItemTypeMapper;
 import com.unimag.unimagleisureinventory.model.item.ItemType;
 import com.unimag.unimagleisureinventory.repositories.ItemTypeRepository;
@@ -28,7 +30,7 @@ public class ItemTypeServiceImpl implements ItemTypeService {
 
     public ItemTypeResponseDTO create(CreateItemTypeRequestDTO request) {
         if (itemTypeRepository.existsByName(request.name())) {
-            throw new RuntimeException("Item type already exists");
+            throw new BusinessException("Item type already exists");
         }
         return itemTypeMapper.toResponseDTO(
                 itemTypeRepository.save(itemTypeMapper.toEntity(request))
@@ -37,10 +39,10 @@ public class ItemTypeServiceImpl implements ItemTypeService {
 
     public ItemTypeResponseDTO update(UUID id, CreateItemTypeRequestDTO request) {
         ItemType itemType = itemTypeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Item type not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Item type not found"));
 
         if (itemTypeRepository.existsByName(request.name())) {
-            throw new RuntimeException("Item type name already in use");
+            throw new BusinessException("Item type name already in use");
         }
 
         itemType.setName(request.name());
@@ -49,7 +51,7 @@ public class ItemTypeServiceImpl implements ItemTypeService {
 
     public void delete(UUID id) {
         if (!itemTypeRepository.existsById(id)) {
-            throw new RuntimeException("Item type not found");
+            throw new ResourceNotFoundException("Item type not found");
         }
         itemTypeRepository.deleteById(id);
     }

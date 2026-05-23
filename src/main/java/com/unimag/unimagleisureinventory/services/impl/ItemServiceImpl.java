@@ -2,6 +2,7 @@ package com.unimag.unimagleisureinventory.services.impl;
 
 import com.unimag.unimagleisureinventory.dtos.item.CreateItemRequestDTO;
 import com.unimag.unimagleisureinventory.dtos.item.ItemResponseDTO;
+import com.unimag.unimagleisureinventory.exceptions.ResourceNotFoundException;
 import com.unimag.unimagleisureinventory.mappers.ItemMapper;
 import com.unimag.unimagleisureinventory.model.item.Item;
 import com.unimag.unimagleisureinventory.model.item.ItemType;
@@ -43,7 +44,7 @@ public class ItemServiceImpl implements ItemService {
     // RF-31 — agregar artículo
     public ItemResponseDTO createItem(CreateItemRequestDTO request) {
         ItemType itemType = itemTypeRepository.findById(request.itemTypeId())
-                .orElseThrow(() -> new RuntimeException("ItemType not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("ItemType not found"));
 
         Item item = itemMapper.toEntity(request);
         item.setItemType(itemType);
@@ -55,10 +56,10 @@ public class ItemServiceImpl implements ItemService {
     // RF-31 — editar artículo
     public ItemResponseDTO updateItem(UUID itemId, CreateItemRequestDTO request) {
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new RuntimeException("Item not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found"));
 
         ItemType itemType = itemTypeRepository.findById(request.itemTypeId())
-                .orElseThrow(() -> new RuntimeException("ItemType not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("ItemType not found"));
 
         item.setName(request.name());
         item.setDescription(request.description());
@@ -73,7 +74,7 @@ public class ItemServiceImpl implements ItemService {
     // RF-31 — eliminar artículo
     public void deleteItem(UUID itemId) {
         if (!itemRepository.existsById(itemId)) {
-            throw new RuntimeException("Item not found");
+            throw new ResourceNotFoundException("Item not found");
         }
         itemRepository.deleteById(itemId);
     }
