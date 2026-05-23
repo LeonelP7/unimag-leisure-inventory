@@ -5,6 +5,7 @@ import com.unimag.unimagleisureinventory.model.penalty.Penalty;
 import com.unimag.unimagleisureinventory.model.penalty.PenaltyType;
 import org.springframework.data.repository.CrudRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,4 +22,6 @@ public interface PenaltyRepository extends CrudRepository<Penalty, UUID> {
 
     // Sanciones por tipo, útil para reportes (RF-30)
     List<Penalty> findByPenaltyType_Id(UUID penaltyTypeId);
+
+    List<Penalty> findByStartDateBetween(LocalDateTime from, LocalDateTime to);
 }
