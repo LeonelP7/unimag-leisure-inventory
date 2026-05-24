@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface CheckOutStatusLogsRepository extends JpaRepository<CheckOutStatusLogs, UUID> {
 
     // Ver historial completo de cambios de un préstamo (RNF-10)
-    List<CheckOutStatusLogs> findByCheckout_ChekOutId(UUID checkoutId);
+    List<CheckOutStatusLogs> findByCheckout_CheckOutId(UUID checkoutId);
 
     // Ver todas las acciones realizadas por un auxiliar
     List<CheckOutStatusLogs> findByTriggeredBy_Id(UUID clerkId);

@@ -10,7 +10,7 @@ import org.mapstruct.Mapping;
 public interface CheckOutMapper {
     CheckOutResponseDTO toResponseDTO(CheckOut checkOut);
 
-    @Mapping(target = "chekOutId", ignore = true)
+    @Mapping(target = "checkOutId", ignore = true)
     @Mapping(target = "checkOutDate", ignore = true)
     @Mapping(target = "dueDate", ignore = true)
     @Mapping(target = "checkInDate", ignore = true)
