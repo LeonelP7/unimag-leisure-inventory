@@ -32,6 +32,13 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationMapper reservationMapper;
     private final AuditLogServiceImpl auditLogService;
 
+    public ReservationResponseDTO getById(UUID id) {
+        return reservationMapper.toResponseDTO(
+                reservationRepository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("Reservation not found"))
+        );
+    }
+
     @Transactional
     public ReservationResponseDTO create(CreateReservationRequestDTO request, Long studentId) {
 

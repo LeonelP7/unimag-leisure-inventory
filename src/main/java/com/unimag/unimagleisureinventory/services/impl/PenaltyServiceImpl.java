@@ -36,6 +36,13 @@ public class PenaltyServiceImpl implements PenaltyService {
     private final PenaltyMapper penaltyMapper;
     private final AuditLogService  auditLogService;
 
+    public PenaltyResponseDTO getById(UUID id) {
+        return penaltyMapper.toResponseDTO(
+                penaltyRepository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("Penalty not found"))
+        );
+    }
+
     // RF-21/RF-22 — activar sanción manualmente
     @Transactional
     public PenaltyResponseDTO create(CreatePenaltyRequestDTO request) {

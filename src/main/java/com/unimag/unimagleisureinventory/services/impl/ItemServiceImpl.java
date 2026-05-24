@@ -26,6 +26,13 @@ public class ItemServiceImpl implements ItemService {
     private final ItemMapper itemMapper;
     private final AuditLogService auditLogService;
 
+    public ItemResponseDTO getById(UUID id) {
+        return itemMapper.toResponseDTO(
+                itemRepository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("Item not found"))
+        );
+    }
+
     // RF-05 — listar disponibles o todos con filtros opcionales (RF-06)
     public List<ItemResponseDTO> getItems(String name, UUID itemTypeId) {
         if (name != null && itemTypeId != null) {

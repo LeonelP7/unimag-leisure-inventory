@@ -41,6 +41,13 @@ public class CheckOutServiceImpl implements CheckOutService {
     private final CheckOutMapper checkOutMapper;
     private final AuditLogServiceImpl auditLogService;
 
+    public CheckOutResponseDTO getById(UUID id) {
+        return checkOutMapper.toResponseDTO(
+                checkOutRepository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("CheckOut not found"))
+        );
+    }
+
     // RF-13/RF-14 — registrar préstamo
     @Transactional
     public CheckOutResponseDTO create(CreateCheckOutRequestDTO request) {

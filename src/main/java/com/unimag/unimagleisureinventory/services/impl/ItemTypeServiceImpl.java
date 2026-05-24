@@ -21,6 +21,13 @@ public class ItemTypeServiceImpl implements ItemTypeService {
     private final ItemTypeRepository itemTypeRepository;
     private final ItemTypeMapper itemTypeMapper;
 
+    public ItemTypeResponseDTO getById(UUID id) {
+        return itemTypeMapper.toResponseDTO(
+                itemTypeRepository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("Item type not found"))
+        );
+    }
+
     public List<ItemTypeResponseDTO> getAll() {
         return itemTypeRepository.findAll()
                 .stream()

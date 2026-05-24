@@ -13,4 +13,5 @@ public interface ReservationService {
     void cancel(UUID reservationId, Long studentId);
     ReservationResponseDTO verify(UUID reservationId);
     ReservationResponseDTO approve(UUID reservationId, ApproveReservationRequestDTO request);
+    ReservationResponseDTO getById(UUID id);
 }

@@ -11,4 +11,5 @@ public interface ItemTypeService {
     ItemTypeResponseDTO create(CreateItemTypeRequestDTO request);
     ItemTypeResponseDTO update(UUID id, CreateItemTypeRequestDTO request);
     void delete(UUID id);
+    ItemTypeResponseDTO getById(UUID id);
 }

@@ -15,4 +15,5 @@ public interface UserService {
     List<PersonResponseDTO> getByRole(Role role);
     PersonResponseDTO updatePerson(UUID personId, CreatePersonRequestDTO request);
     void deletePerson(UUID personId);
+    PersonResponseDTO getById(UUID id);
 }

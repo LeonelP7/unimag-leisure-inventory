@@ -20,6 +20,12 @@ public class PenaltyTypeController {
 
     private final PenaltyTypeService penaltyTypeService;
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
+    public ResponseEntity<PenaltyTypeResponseDTO> getById(@PathVariable UUID id) {
+        return ResponseEntity.ok(penaltyTypeService.getById(id));
+    }
+
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
     public ResponseEntity<List<PenaltyTypeResponseDTO>> getAll() {

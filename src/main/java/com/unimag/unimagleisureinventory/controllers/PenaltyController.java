@@ -24,6 +24,12 @@ public class PenaltyController {
     private final PenaltyService penaltyService;
     private final SecurityUtils securityUtils;
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
+    public ResponseEntity<PenaltyResponseDTO> getById(@PathVariable UUID id) {
+        return ResponseEntity.ok(penaltyService.getById(id));
+    }
+
     // RF-21/RF-22 — activar sanción
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
