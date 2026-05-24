@@ -10,6 +10,6 @@ import java.util.UUID;
 public interface CheckOutService {
     CheckOutResponseDTO create(CreateCheckOutRequestDTO request);
     CheckOutResponseDTO checkIn(UUID checkOutId, CheckInRequestDTO request);
-    CheckOutResponseDTO updateCondition(UUID checkOutId, CheckInRequestDTO request);
+    // CheckOutResponseDTO updateCondition(UUID checkOutId, CheckInRequestDTO request);
     List<CheckOutResponseDTO> getByStudent(Long studentId);
 }

@@ -4,10 +4,12 @@ import com.unimag.unimagleisureinventory.dtos.item.CreateItemRequestDTO;
 import com.unimag.unimagleisureinventory.dtos.item.ItemResponseDTO;
 import com.unimag.unimagleisureinventory.exceptions.ResourceNotFoundException;
 import com.unimag.unimagleisureinventory.mappers.ItemMapper;
+import com.unimag.unimagleisureinventory.model.enums.ItemStatus;
 import com.unimag.unimagleisureinventory.model.item.Item;
 import com.unimag.unimagleisureinventory.model.item.ItemType;
 import com.unimag.unimagleisureinventory.repositories.ItemRepository;
 import com.unimag.unimagleisureinventory.repositories.ItemTypeRepository;
+import com.unimag.unimagleisureinventory.services.AuditLogService;
 import com.unimag.unimagleisureinventory.services.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final ItemTypeRepository itemTypeRepository;
     private final ItemMapper itemMapper;
+    private final AuditLogService auditLogService;
 
     // RF-05 — listar disponibles o todos con filtros opcionales (RF-06)
     public List<ItemResponseDTO> getItems(String name, UUID itemTypeId) {
@@ -50,7 +53,10 @@ public class ItemServiceImpl implements ItemService {
         item.setItemType(itemType);
         item.setAvailableQuantity(request.totalQuantity()); // al crear, todos disponibles
 
-        return itemMapper.toResponseDTO(itemRepository.save(item));
+        Item saved = itemRepository.save(item);
+        auditLogService.logItemStatus(saved, null, saved.getItemStatus());
+
+        return itemMapper.toResponseDTO(saved);
     }
 
     // RF-31 — editar artículo
@@ -61,6 +67,7 @@ public class ItemServiceImpl implements ItemService {
         ItemType itemType = itemTypeRepository.findById(request.itemTypeId())
                 .orElseThrow(() -> new ResourceNotFoundException("ItemType not found"));
 
+        ItemStatus previous = item.getItemStatus();
         item.setName(request.name());
         item.setDescription(request.description());
         item.setTotalQuantity(request.totalQuantity());
@@ -68,7 +75,10 @@ public class ItemServiceImpl implements ItemService {
         item.setItemStatus(request.itemStatus());
         item.setItemCondition(request.itemCondition());
 
-        return itemMapper.toResponseDTO(itemRepository.save(item));
+        Item saved = itemRepository.save(item);
+        auditLogService.logItemStatus(saved, previous, saved.getItemStatus());
+
+        return itemMapper.toResponseDTO(saved);
     }
 
     // RF-31 — eliminar artículo
