@@ -30,6 +30,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final StudentRepository studentRepository;
     private final ItemRepository itemRepository;
     private final ReservationMapper reservationMapper;
+    private final AuditLogServiceImpl auditLogService;
 
     @Transactional
     public ReservationResponseDTO create(CreateReservationRequestDTO request, Long studentId) {
@@ -83,8 +84,10 @@ public class ReservationServiceImpl implements ReservationService {
             throw new BusinessException("Only pending reservations can be cancelled");
         }
 
+        ReservationStatus previous = reservation.getStatus();
         reservation.setStatus(ReservationStatus.CANCELLED);
         reservationRepository.save(reservation);
+        auditLogService.logReservationStatus(reservation, previous, ReservationStatus.CANCELLED);
     }
 
     // RF-12 — verificar reserva por auxiliar
@@ -105,14 +108,18 @@ public class ReservationServiceImpl implements ReservationService {
             throw new BusinessException("Only pending reservations can be approved");
         }
 
+        ReservationStatus previous = reservation.getStatus(); // captura PENDING
+
         if (request.approved()) {
             reservation.setStatus(ReservationStatus.ACCEPTED);
-            // RF-14 — actualizar inventario
             itemRepository.decrementAvailableQuantity(reservation.getItem().getItemId());
         } else {
             reservation.setStatus(ReservationStatus.REJECTED);
         }
 
-        return reservationMapper.toResponseDTO(reservationRepository.save(reservation));
+        Reservation saved = reservationRepository.save(reservation);
+        auditLogService.logReservationStatus(saved, previous, saved.getStatus());
+
+        return reservationMapper.toResponseDTO(saved);
     }
 }

@@ -15,6 +15,7 @@ import com.unimag.unimagleisureinventory.repositories.CheckOutRepository;
 import com.unimag.unimagleisureinventory.repositories.PenaltyRepository;
 import com.unimag.unimagleisureinventory.repositories.PenaltyTypeRepository;
 import com.unimag.unimagleisureinventory.repositories.StudentRepository;
+import com.unimag.unimagleisureinventory.services.AuditLogService;
 import com.unimag.unimagleisureinventory.services.PenaltyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,7 @@ public class PenaltyServiceImpl implements PenaltyService {
     private final CheckOutRepository checkOutRepository;
     private final PenaltyTypeRepository penaltyTypeRepository;
     private final PenaltyMapper penaltyMapper;
+    private final AuditLogService  auditLogService;
 
     // RF-21/RF-22 — activar sanción manualmente
     @Transactional
@@ -61,7 +63,10 @@ public class PenaltyServiceImpl implements PenaltyService {
         penalty.setStartDate(LocalDateTime.now());
         penalty.setPenaltyStatus(PenaltyStatus.ACTIVE);
 
-        return penaltyMapper.toResponseDTO(penaltyRepository.save(penalty));
+        Penalty saved =  penaltyRepository.save(penalty);
+        auditLogService.logPenaltyStatus(saved, null, PenaltyStatus.ACTIVE);
+
+        return penaltyMapper.toResponseDTO(saved);
     }
 
     // RF-24 — cerrar sanción
@@ -74,10 +79,13 @@ public class PenaltyServiceImpl implements PenaltyService {
             throw new BusinessException("Penalty is not active");
         }
 
+        PenaltyStatus previous = penalty.getPenaltyStatus();
         penalty.setPenaltyStatus(PenaltyStatus.RESOLVED);
         penalty.setEndDate(LocalDateTime.now());
+        Penalty saved = penaltyRepository.save(penalty);
 
-        return penaltyMapper.toResponseDTO(penaltyRepository.save(penalty));
+        auditLogService.logPenaltyStatus(saved, previous, PenaltyStatus.RESOLVED);
+        return penaltyMapper.toResponseDTO(saved);
     }
 
     // RF-29 — historial de sanciones del estudiante

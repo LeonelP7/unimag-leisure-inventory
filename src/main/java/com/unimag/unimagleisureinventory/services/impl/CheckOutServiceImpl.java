@@ -39,6 +39,7 @@ public class CheckOutServiceImpl implements CheckOutService {
     private final PenaltyRepository penaltyRepository;
     private final PenaltyTypeRepository penaltyTypeRepository;
     private final CheckOutMapper checkOutMapper;
+    private final AuditLogServiceImpl auditLogService;
 
     // RF-13/RF-14 — registrar préstamo
     @Transactional
@@ -87,10 +88,13 @@ public class CheckOutServiceImpl implements CheckOutService {
 
         itemRepository.decrementAvailableQuantity(item.getItemId());
 
-        return checkOutMapper.toResponseDTO(checkOutRepository.save(checkOut));
+        CheckOut saved = checkOutRepository.save(checkOut);
+        auditLogService.logCheckOutStatus(saved, null, CheckOutStatus.ACTIVE);
+
+        return checkOutMapper.toResponseDTO(saved);
     }
 
-    // RF-16 — registrar devolución
+    // RF-16 — registrar devolución y RF-17 — evaluar estado del artículo devuelto
     @Transactional
     public CheckOutResponseDTO checkIn(UUID checkOutId, CheckInRequestDTO request) {
         CheckOut checkOut = checkOutRepository.findById(checkOutId)
@@ -100,36 +104,42 @@ public class CheckOutServiceImpl implements CheckOutService {
             throw new BusinessException("CheckOut is not active");
         }
 
+        Item item = checkOut.getReservation() != null
+                ? checkOut.getReservation().getItem()
+                : null;
+
+        CheckOutStatus previousCheckOutStatus = checkOut.getStatus();
+        ItemCondition previousItemCondition = item != null ? item.getItemCondition() : null;
+
         checkOut.setCheckInDate(LocalDateTime.now());
         checkOut.setReturnedItemCondition(request.returnedItemCondition());
         checkOut.setStatus(CheckOutStatus.RETURNED);
 
         // RF-19 — liberar artículo en inventario
-        itemRepository.incrementAvailableQuantity(
-                checkOut.getReservation().getItem().getItemId());
+        if (item != null) {
+            itemRepository.incrementAvailableQuantity(item.getItemId());
+        }
 
         // RF-22 — activar sanción si artículo en mal estado
         if (request.returnedItemCondition() == ItemCondition.DAMAGED) {
             activatePenalty(checkOut, "DAMAGED_ITEM");
         }
 
-        return checkOutMapper.toResponseDTO(checkOutRepository.save(checkOut));
-    }
+        CheckOut saved = checkOutRepository.save(checkOut);
 
-    // RF-17 — evaluar estado del artículo devuelto
-    @Transactional
-    public CheckOutResponseDTO updateCondition(UUID checkOutId, CheckInRequestDTO request) {
-        CheckOut checkOut = checkOutRepository.findById(checkOutId)
-                .orElseThrow(() -> new ResourceNotFoundException("CheckOut not found"));
-
-        checkOut.setReturnedItemCondition(request.returnedItemCondition());
-
-        // RF-22 — activar sanción si se actualiza a mal estado
-        if (request.returnedItemCondition() == ItemCondition.DAMAGED) {
-            activatePenalty(checkOut, "DAMAGED_ITEM");
+        // logs
+        auditLogService.logCheckOutStatus(saved, previousCheckOutStatus, CheckOutStatus.RETURNED);
+        if (item != null) {
+            auditLogService.logItemCondition(
+                    item,
+                    previousItemCondition,
+                    request.returnedItemCondition(),
+                    request.returnedItemCondition() == ItemCondition.DAMAGED
+                            ? "Returned damaged" : null
+            );
         }
 
-        return checkOutMapper.toResponseDTO(checkOutRepository.save(checkOut));
+        return checkOutMapper.toResponseDTO(saved);
     }
 
     // RF-27/RF-28 — historial de préstamos

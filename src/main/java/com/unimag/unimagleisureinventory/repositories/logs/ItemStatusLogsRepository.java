@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public interface ItemStatusLogsRepository extends JpaRepository<ItemCondigionLogs, UUID> {
+public interface ItemStatusLogsRepository extends JpaRepository<ItemStatusLogs, UUID> {
 
     // Historial de cambios de estado de un artículo (RNF-10)
     List<ItemStatusLogs> findByItem_ItemId(UUID itemId);

@@ -33,22 +33,13 @@ public class CheckOutController {
                 .body(checkOutService.create(request));
     }
 
-    // RF-16 — registrar devolución (auxiliar)
+    // RF-16 — registrar devolución (auxiliar) y RF-17 — evaluar estado del artículo (auxiliar)
     @PutMapping("/{id}/checkin")
     @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
     public ResponseEntity<CheckOutResponseDTO> checkIn(
             @PathVariable UUID id,
             @Valid @RequestBody CheckInRequestDTO request) {
         return ResponseEntity.ok(checkOutService.checkIn(id, request));
-    }
-
-    // RF-17 — evaluar estado del artículo (auxiliar)
-    @PutMapping("/{id}/condition")
-    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
-    public ResponseEntity<CheckOutResponseDTO> updateCondition(
-            @PathVariable UUID id,
-            @Valid @RequestBody CheckInRequestDTO request) {
-        return ResponseEntity.ok(checkOutService.updateCondition(id, request));
     }
 
     // RF-27 — historial del propio estudiante
