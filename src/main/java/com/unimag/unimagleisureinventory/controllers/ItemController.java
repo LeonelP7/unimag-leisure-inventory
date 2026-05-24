@@ -20,6 +20,12 @@ public class ItemController {
 
     private final ItemService itemService;
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK', 'STUDENT')")
+    public ResponseEntity<ItemResponseDTO> getById(@PathVariable UUID id) {
+        return ResponseEntity.ok(itemService.getById(id));
+    }
+
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK', 'STUDENT')")
     public ResponseEntity<List<ItemResponseDTO>> getItems(

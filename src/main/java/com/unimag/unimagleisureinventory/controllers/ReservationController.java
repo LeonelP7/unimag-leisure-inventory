@@ -23,8 +23,13 @@ import java.util.UUID;
 public class ReservationController {
 
     private final ReservationService reservationService;
-    private final JwtUtil jwtUtil;
     private final SecurityUtils securityUtils;
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK', 'STUDENT')")
+    public ResponseEntity<ReservationResponseDTO> getById(@PathVariable UUID id) {
+        return ResponseEntity.ok(reservationService.getById(id));
+    }
 
     @PostMapping
     @PreAuthorize("hasRole('STUDENT')")

@@ -24,6 +24,12 @@ public class CheckOutController {
     private final CheckOutService checkOutService;
     private final SecurityUtils securityUtils;
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
+    public ResponseEntity<CheckOutResponseDTO> getById(@PathVariable UUID id) {
+        return ResponseEntity.ok(checkOutService.getById(id));
+    }
+
     // RF-13/RF-14 — registrar préstamo (auxiliar)
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")

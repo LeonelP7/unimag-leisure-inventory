@@ -33,6 +33,13 @@ public class UserServiceImpl implements UserService {
     private final PersonMapper personMapper;
     private final StudentMapper studentMapper;
 
+    public PersonResponseDTO getById(UUID id) {
+        return personMapper.toResponseDTO(
+                personRepository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("Person not found"))
+        );
+    }
+
     public PersonResponseDTO createPerson(CreatePersonRequestDTO request) {
         if (personRepository.existsByEmail(request.email())) {
             throw new BusinessException("Email already in use");

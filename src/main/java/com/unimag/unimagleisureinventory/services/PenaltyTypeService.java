@@ -11,4 +11,5 @@ public interface PenaltyTypeService {
     PenaltyTypeResponseDTO create(CreatePenaltyTypeRequestDTO request);
     PenaltyTypeResponseDTO update(UUID id, CreatePenaltyTypeRequestDTO request);
     void delete(UUID id);
+    PenaltyTypeResponseDTO getById(UUID id);
 }

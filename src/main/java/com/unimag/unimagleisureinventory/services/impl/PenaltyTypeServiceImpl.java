@@ -21,6 +21,13 @@ public class PenaltyTypeServiceImpl implements PenaltyTypeService {
     private final PenaltyTypeRepository penaltyTypeRepository;
     private final PenaltyTypeMapper penaltyTypeMapper;
 
+    public PenaltyTypeResponseDTO getById(UUID id) {
+        return penaltyTypeMapper.toResponseDTO(
+                penaltyTypeRepository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("Penalty type not found"))
+        );
+    }
+
     public List<PenaltyTypeResponseDTO> getAll() {
         return penaltyTypeRepository.findAll()
                 .stream()
