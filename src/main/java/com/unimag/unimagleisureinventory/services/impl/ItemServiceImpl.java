@@ -36,7 +36,7 @@ public class ItemServiceImpl implements ItemService {
     // RF-05 — listar disponibles o todos con filtros opcionales (RF-06)
     public List<ItemResponseDTO> getItems(String name, UUID itemTypeId) {
         if (name != null && itemTypeId != null) {
-            return itemRepository.findByNameContainingIgnoreCaseAndItemType_IdItemType(name, itemTypeId)
+            return itemRepository.findByNameContainingIgnoreCaseAndItemTypeId(name, itemTypeId)
                     .stream().map(itemMapper::toResponseDTO).toList();
         }
         if (name != null) {
@@ -44,7 +44,7 @@ public class ItemServiceImpl implements ItemService {
                     .stream().map(itemMapper::toResponseDTO).toList();
         }
         if (itemTypeId != null) {
-            return itemRepository.findByItemType_IdItemType(itemTypeId)
+            return itemRepository.findByItemTypeId(itemTypeId)
                     .stream().map(itemMapper::toResponseDTO).toList();
         }
         return itemRepository.findAvailableItems()
@@ -58,7 +58,7 @@ public class ItemServiceImpl implements ItemService {
 
         Item item = itemMapper.toEntity(request);
         item.setItemType(itemType);
-        item.setAvailableQuantity(request.totalQuantity()); // al crear, todos disponibles
+        item.setAvailableQuantity(request.totalQuantity());
 
         Item saved = itemRepository.save(item);
         auditLogService.logItemStatus(saved, null, saved.getItemStatus());
