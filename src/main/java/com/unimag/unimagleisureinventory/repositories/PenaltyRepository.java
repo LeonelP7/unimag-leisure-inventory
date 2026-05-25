@@ -4,7 +4,6 @@ import com.unimag.unimagleisureinventory.model.enums.PenaltyStatus;
 import com.unimag.unimagleisureinventory.model.penalty.Penalty;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,6 +24,7 @@ public interface PenaltyRepository extends JpaRepository<Penalty, UUID> {
     List<Penalty> findByStudentIdAndStatus(Long studentId, PenaltyStatus status);
 
     // Sanciones por tipo, útil para reportes (RF-30)
+    @Query("SELECT p FROM Penalty p WHERE p.penaltyType.penaltyTypeId = :penaltyTypeId")
     List<Penalty> findByPenaltyTypeId(UUID penaltyTypeId);
 
     List<Penalty> findByStartDateBetween(LocalDateTime from, LocalDateTime to);

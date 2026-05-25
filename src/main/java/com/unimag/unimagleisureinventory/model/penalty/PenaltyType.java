@@ -15,6 +15,6 @@ public class PenaltyType {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(updatable = false, nullable = false)
-    private UUID idPenaltyType;
+    private UUID penaltyTypeId;
     private String name;
 }

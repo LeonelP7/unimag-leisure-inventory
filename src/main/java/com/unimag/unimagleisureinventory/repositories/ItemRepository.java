@@ -15,14 +15,14 @@ public interface ItemRepository extends JpaRepository<Item, UUID> {
     List<Item> findAvailableItems();
 
     // RF-06 — filtrar por categoría
-    @Query("SELECT i FROM Item i WHERE i.itemType.idItemType = :itemTypeId")
+    @Query("SELECT i FROM Item i WHERE i.itemType.itemTypeId = :itemTypeId")
     List<Item> findByItemTypeId(UUID itemTypeId);
 
     // RF-06 — filtrar por nombre
     List<Item> findByNameContainingIgnoreCase(String name);
 
     // RF-06 — filtrar por nombre y categoría a la vez
-    @Query("SELECT i FROM Item i WHERE LOWER(i.name) LIKE LOWER(CONCAT('%', :name, '%')) AND i.itemType.idItemType = :itemTypeId")
+    @Query("SELECT i FROM Item i WHERE LOWER(i.name) LIKE LOWER(CONCAT('%', :name, '%')) AND i.itemType.itemTypeId = :itemTypeId")
     List<Item> findByNameContainingIgnoreCaseAndItemTypeId(String name, UUID itemTypeId);
 
     // RF-14 — actualizar inventario al confirmar entrega
