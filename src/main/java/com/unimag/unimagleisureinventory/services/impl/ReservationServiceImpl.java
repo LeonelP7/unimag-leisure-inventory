@@ -43,7 +43,7 @@ public class ReservationServiceImpl implements ReservationService {
     public ReservationResponseDTO create(CreateReservationRequestDTO request, Long studentId) {
 
         // RF-07 — verificar que no tenga préstamo activo
-        boolean hasActive = reservationRepository.existsByStudent_IdAndStatus(
+        boolean hasActive = reservationRepository.existsByStudentIdAndStatus(
                 studentId, ReservationStatus.ACCEPTED);
         if (hasActive) {
             throw new BusinessException("Student already has an active loan");
@@ -71,7 +71,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     // RF-10 — consultar reservas activas del estudiante
     public List<ReservationResponseDTO> getMyReservations(Long studentId) {
-        return reservationRepository.findByStudent_Id(studentId)
+        return reservationRepository.findByStudentId(studentId)
                 .stream()
                 .map(reservationMapper::toResponseDTO)
                 .toList();

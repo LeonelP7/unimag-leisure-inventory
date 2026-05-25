@@ -151,7 +151,7 @@ public class CheckOutServiceImpl implements CheckOutService {
 
     // RF-27/RF-28 — historial de préstamos
     public List<CheckOutResponseDTO> getByStudent(Long studentId) {
-        return checkOutRepository.findByReservation_Student_Id(studentId)
+        return checkOutRepository.findByStudentId(studentId)
                 .stream()
                 .map(checkOutMapper::toResponseDTO)
                 .toList();
@@ -159,7 +159,7 @@ public class CheckOutServiceImpl implements CheckOutService {
 
     // RF-21/RF-22 — activar sanción
     private void activatePenalty(CheckOut checkOut, String penaltyTypeName) {
-        boolean alreadyPenalized = penaltyRepository.existsByStudent_IdAndStatus(
+        boolean alreadyPenalized = penaltyRepository.existsByStudentIdAndStatus(
                 checkOut.getReservation().getStudent().getStudentId(),
                 PenaltyStatus.ACTIVE);
 
