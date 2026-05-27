@@ -1,6 +1,7 @@
 package com.unimag.unimagleisureinventory.repositories.logs;
 
 import com.unimag.unimagleisureinventory.model.enums.ItemStatus;
+import com.unimag.unimagleisureinventory.model.enums.Role;
 import com.unimag.unimagleisureinventory.model.item.ItemCondigionLogs;
 import com.unimag.unimagleisureinventory.model.item.ItemStatusLogs;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,4 +21,13 @@ public interface ItemStatusLogsRepository extends JpaRepository<ItemStatusLogs, 
 
     List<ItemStatusLogs> findByNewStatusAndRecordedAtBetween(
             ItemStatus status, LocalDateTime from, LocalDateTime to);
+
+    @Query("SELECT l FROM ItemStatusLogs l WHERE " +
+            "(:from IS NULL OR l.recordedAt >= :from) AND " +
+            "(:to IS NULL OR l.recordedAt <= :to) AND " +
+            "(:role IS NULL OR l.triggeredBy.role = :role) AND " +
+            "(:newStatus IS NULL OR l.newStatus = :newStatus)")
+    List<ItemStatusLogs> findWithFilters(
+            LocalDateTime from, LocalDateTime to,
+            Role role, ItemStatus newStatus);
 }

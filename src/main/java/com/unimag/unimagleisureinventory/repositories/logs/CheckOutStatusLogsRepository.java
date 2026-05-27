@@ -1,6 +1,8 @@
 package com.unimag.unimagleisureinventory.repositories.logs;
 
 import com.unimag.unimagleisureinventory.model.checkout.CheckOutStatusLogs;
+import com.unimag.unimagleisureinventory.model.enums.CheckOutStatus;
+import com.unimag.unimagleisureinventory.model.enums.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -17,4 +19,13 @@ public interface CheckOutStatusLogsRepository extends JpaRepository<CheckOutStat
     List<CheckOutStatusLogs> findByTriggeredById(UUID clerkId);
 
     List<CheckOutStatusLogs> findByRecordedAtBetween(LocalDateTime from, LocalDateTime to);
+
+    @Query("SELECT l FROM CheckOutStatusLogs l WHERE " +
+            "(:from IS NULL OR l.recordedAt >= :from) AND " +
+            "(:to IS NULL OR l.recordedAt <= :to) AND " +
+            "(:role IS NULL OR l.triggeredBy.role = :role) AND " +
+            "(:newStatus IS NULL OR l.newStatus = :newStatus)")
+    List<CheckOutStatusLogs> findWithFilters(
+            LocalDateTime from, LocalDateTime to,
+            Role role, CheckOutStatus newStatus);
 }

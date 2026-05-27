@@ -1,6 +1,7 @@
 package com.unimag.unimagleisureinventory.repositories.logs;
 
 import com.unimag.unimagleisureinventory.model.enums.PenaltyStatus;
+import com.unimag.unimagleisureinventory.model.enums.Role;
 import com.unimag.unimagleisureinventory.model.penalty.PenaltyStatusLogs;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,4 +20,13 @@ public interface PenaltyStatusLogsRepository extends JpaRepository<PenaltyStatus
 
     List<PenaltyStatusLogs> findByNewStatusAndRecordedAtBetween(
             PenaltyStatus status, LocalDateTime from, LocalDateTime to);
+
+    @Query("SELECT l FROM PenaltyStatusLogs l WHERE " +
+            "(:from IS NULL OR l.recordedAt >= :from) AND " +
+            "(:to IS NULL OR l.recordedAt <= :to) AND " +
+            "(:role IS NULL OR l.triggeredBy.role = :role) AND " +
+            "(:newStatus IS NULL OR l.newStatus = :newStatus)")
+    List<PenaltyStatusLogs> findWithFilters(
+            LocalDateTime from, LocalDateTime to,
+            Role role, PenaltyStatus newStatus);
 }
