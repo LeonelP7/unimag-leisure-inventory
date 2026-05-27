@@ -13,4 +13,5 @@ public interface CheckOutService {
     // CheckOutResponseDTO updateCondition(UUID checkOutId, CheckInRequestDTO request);
     List<CheckOutResponseDTO> getByStudent(Long studentId);
     CheckOutResponseDTO getById(UUID id);
+    CheckOutResponseDTO getActiveByStudent(Long studentId);
 }

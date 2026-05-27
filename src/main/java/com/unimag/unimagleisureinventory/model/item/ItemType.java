@@ -14,6 +14,6 @@ public class ItemType {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(updatable = false, nullable = false)
-    private UUID idItemType;
+    private UUID itemTypeId;
     private String name;
 }

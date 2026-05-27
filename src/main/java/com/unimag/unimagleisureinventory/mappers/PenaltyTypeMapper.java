@@ -11,6 +11,6 @@ public interface PenaltyTypeMapper {
 
     PenaltyTypeResponseDTO toResponseDTO(PenaltyType penaltyType);
 
-    @Mapping(target = "idPenaltyType", ignore = true)
+    @Mapping(target = "penaltyTypeId", ignore = true)
     PenaltyType toEntity(CreatePenaltyTypeRequestDTO request);
 }

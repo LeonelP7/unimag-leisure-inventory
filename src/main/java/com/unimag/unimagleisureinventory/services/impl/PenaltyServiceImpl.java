@@ -48,7 +48,7 @@ public class PenaltyServiceImpl implements PenaltyService {
     public PenaltyResponseDTO create(CreatePenaltyRequestDTO request) {
 
         // verificar que no tenga ya una sanción activa
-        if (penaltyRepository.existsByStudent_IdAndStatus(
+        if (penaltyRepository.existsByStudentIdAndStatus(
                 request.studentId(), PenaltyStatus.ACTIVE)) {
             throw new BusinessException("Student already has an active penalty");
         }
@@ -97,7 +97,7 @@ public class PenaltyServiceImpl implements PenaltyService {
 
     // RF-29 — historial de sanciones del estudiante
     public List<PenaltyResponseDTO> getByStudent(Long studentId) {
-        return penaltyRepository.findByStudent_Id(studentId)
+        return penaltyRepository.findByStudentId(studentId)
                 .stream()
                 .map(penaltyMapper::toResponseDTO)
                 .toList();
@@ -105,7 +105,7 @@ public class PenaltyServiceImpl implements PenaltyService {
 
     // RF-25 — verificar sanción activa
     public boolean hasActivePenalty(Long studentId) {
-        return penaltyRepository.existsByStudent_IdAndStatus(
+        return penaltyRepository.existsByStudentIdAndStatus(
                 studentId, PenaltyStatus.ACTIVE);
     }
 }

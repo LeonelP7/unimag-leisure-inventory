@@ -16,4 +16,6 @@ public interface UserService {
     PersonResponseDTO updatePerson(UUID personId, CreatePersonRequestDTO request);
     void deletePerson(UUID personId);
     PersonResponseDTO getById(UUID id);
+    List<StudentResponseDTO> searchStudents(String query);
+    StudentResponseDTO getStudentById(Long StudentId);
 }

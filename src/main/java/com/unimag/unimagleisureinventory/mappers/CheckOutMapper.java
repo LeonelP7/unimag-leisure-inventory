@@ -17,5 +17,6 @@ public interface CheckOutMapper {
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "returnedItemCondition", ignore = true)
     @Mapping(target = "reservation", ignore = true)
+    @Mapping(target = "student", ignore = true)
     CheckOut toEntity(CreateCheckOutRequestDTO request);
 }

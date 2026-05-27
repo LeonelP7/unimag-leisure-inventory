@@ -11,6 +11,6 @@ public interface ItemTypeMapper {
 
     ItemTypeResponseDTO toResponseDTO(ItemType itemType);
 
-    @Mapping(target = "idItemType", ignore = true)
+    @Mapping(target = "itemTypeId", ignore = true)
     ItemType toEntity(CreateItemTypeRequestDTO request);
 }

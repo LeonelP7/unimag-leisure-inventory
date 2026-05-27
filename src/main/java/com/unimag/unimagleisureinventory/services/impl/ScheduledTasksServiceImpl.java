@@ -59,7 +59,7 @@ public class ScheduledTasksServiceImpl implements ScheduledTasksService {
         }
 
         // Verificar que no tenga ya una sanción activa por este checkout
-        boolean alreadyPenalized = penaltyRepository.existsByStudent_IdAndStatus(
+        boolean alreadyPenalized = penaltyRepository.existsByStudentIdAndStatus(
                 student.getStudentId(), PenaltyStatus.ACTIVE);
 
         if (alreadyPenalized) {

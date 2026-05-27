@@ -100,4 +100,17 @@ public class UserServiceImpl implements UserService {
         }
         personRepository.deleteById(personId);
     }
+
+    @Override
+    public List<StudentResponseDTO> searchStudents(String query) {
+        return studentRepository.searchByQuery(query)
+                .stream()
+                .map(studentMapper::toResponseDTO)
+                .toList();
+    }
+
+    @Override
+    public StudentResponseDTO getStudentById(Long StudentId) {
+        return studentRepository.findById(StudentId).map(studentMapper::toResponseDTO).orElse(null);
+    }
 }

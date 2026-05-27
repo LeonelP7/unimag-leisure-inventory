@@ -10,6 +10,4 @@ public record LoginRequestDTO(
         @NotBlank(message = "The password is required")
         String password
 ) {
-    public String getEmail() {
-    }
 }

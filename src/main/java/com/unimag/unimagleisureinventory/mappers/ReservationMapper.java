@@ -14,8 +14,7 @@ public interface ReservationMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "student", ignore = true)
     @Mapping(target = "item", ignore = true)
-    @Mapping(target = "startDate", ignore = true)
-    @Mapping(target = "endDate", ignore = true)
+    @Mapping(target = "reservationTime", ignore = true)
     @Mapping(target = "claimDeadline", ignore = true)
     @Mapping(target = "status", ignore = true)
     Reservation toEntity(CreateReservationRequestDTO request);

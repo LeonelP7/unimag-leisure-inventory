@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses = {StudentMapper.class})
 public interface PenaltyMapper {
 
-    @Mapping(source = "penaltyType.idPenaltyType", target = "penaltyType.idPenaltyType")
+    @Mapping(source = "penaltyType.penaltyTypeId", target = "penaltyType.penaltyTypeId")
     @Mapping(source = "penaltyType.name", target = "penaltyType.name")
     PenaltyResponseDTO toResponseDTO(Penalty penalty);
 
