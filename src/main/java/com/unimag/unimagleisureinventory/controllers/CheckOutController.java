@@ -5,6 +5,10 @@ import com.unimag.unimagleisureinventory.dtos.checkout.CheckInRequestDTO;
 import com.unimag.unimagleisureinventory.dtos.checkout.CheckOutResponseDTO;
 import com.unimag.unimagleisureinventory.dtos.checkout.CreateCheckOutRequestDTO;
 import com.unimag.unimagleisureinventory.services.CheckOutService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +23,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/checkouts")
 @RequiredArgsConstructor
+@Tag(name = "Checkouts", description = "Endpoints for managing item loans and returns")
 public class CheckOutController {
 
     private final CheckOutService checkOutService;
@@ -26,40 +31,60 @@ public class CheckOutController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
+    @Operation(summary = "Get checkout by ID", description = "Returns a single checkout record by its UUID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Checkout found"),
+            @ApiResponse(responseCode = "404", description = "Checkout not found")
+    })
     public ResponseEntity<CheckOutResponseDTO> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(checkOutService.getById(id));
     }
 
-    // RF-13/RF-14 — registrar préstamo (auxiliar)
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
+    @Operation(summary = "Register checkout", description = "Registers a new item loan (RF-13/RF-14)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Checkout registered successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body")
+    })
     public ResponseEntity<CheckOutResponseDTO> create(
             @Valid @RequestBody CreateCheckOutRequestDTO request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(checkOutService.create(request));
     }
 
-    // RF-16 — registrar devolución (auxiliar) y RF-17 — evaluar estado del artículo (auxiliar)
     @PutMapping("/{id}/checkin")
     @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
+    @Operation(summary = "Register check-in", description = "Registers an item return and evaluates its condition (RF-16/RF-17)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Check-in registered successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "404", description = "Checkout not found")
+    })
     public ResponseEntity<CheckOutResponseDTO> checkIn(
             @PathVariable UUID id,
             @Valid @RequestBody CheckInRequestDTO request) {
         return ResponseEntity.ok(checkOutService.checkIn(id, request));
     }
 
-    // RF-27 — historial del propio estudiante
     @GetMapping("/my")
     @PreAuthorize("hasRole('STUDENT')")
+    @Operation(summary = "Get my checkouts", description = "Returns the checkout history for the authenticated student (RF-27)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Checkout history retrieved successfully")
+    })
     public ResponseEntity<List<CheckOutResponseDTO>> getMyCheckOuts(
             HttpServletRequest request) {
         Long studentId = securityUtils.getCurrentStudentId(request);
         return ResponseEntity.ok(checkOutService.getByStudent(studentId));
     }
 
-    // RF-28 — historial de cualquier estudiante (auxiliar)
     @GetMapping("/student/{studentId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
+    @Operation(summary = "Get checkouts by student", description = "Returns the checkout history for a given student (RF-28)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Checkout history retrieved successfully")
+    })
     public ResponseEntity<List<CheckOutResponseDTO>> getByStudent(
             @PathVariable Long studentId) {
         return ResponseEntity.ok(checkOutService.getByStudent(studentId));
