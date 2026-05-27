@@ -103,12 +103,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<StudentResponseDTO> searchStudents(String query) {
-        return studentRepository.findAll().stream()
-                .filter(s ->
-                        s.getPerson().getFirstName().toLowerCase().contains(query.toLowerCase()) ||
-                                s.getPerson().getLastName().toLowerCase().contains(query.toLowerCase()) ||
-                                s.getStudentId().toString().contains(query)
-                )
+        return studentRepository.searchByQuery(query)
+                .stream()
                 .map(studentMapper::toResponseDTO)
                 .toList();
     }

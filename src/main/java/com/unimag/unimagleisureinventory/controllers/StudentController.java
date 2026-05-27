@@ -18,15 +18,7 @@ import java.util.List;
 @RequestMapping("/students")
 @RequiredArgsConstructor
 public class StudentController {
-    private final SecurityUtils securityUtils;
     private final UserService userService;
-
-    @GetMapping("/me")
-    @PreAuthorize("hasRole('STUDENT')")
-    public ResponseEntity<StudentResponseDTO> getMyId(
-            HttpServletRequest request) {
-        return ResponseEntity.ok(userService.getStudentById(securityUtils.getCurrentStudentId(request)));
-    }
 
     @GetMapping("/search")
     @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
