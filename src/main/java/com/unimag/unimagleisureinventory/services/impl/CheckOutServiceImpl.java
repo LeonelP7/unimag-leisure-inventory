@@ -199,4 +199,12 @@ public class CheckOutServiceImpl implements CheckOutService {
             throw new BusinessException("Service is closed between 12:00 and 14:00");
         }
     }
+
+    public CheckOutResponseDTO getActiveByStudent(Long studentId) {
+        return checkOutRepository
+                .findByStudentIdAndStatus(studentId, CheckOutStatus.ACTIVE)
+                .stream().findFirst()
+                .map(checkOutMapper::toResponseDTO)
+                .orElse(null);
+    }
 }

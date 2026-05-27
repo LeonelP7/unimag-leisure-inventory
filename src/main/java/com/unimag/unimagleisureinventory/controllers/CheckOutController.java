@@ -64,4 +64,11 @@ public class CheckOutController {
             @PathVariable Long studentId) {
         return ResponseEntity.ok(checkOutService.getByStudent(studentId));
     }
+
+    @GetMapping("/student/{studentId}/active")
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
+    public ResponseEntity<CheckOutResponseDTO> getActiveByStudent(
+            @PathVariable Long studentId) {
+        return ResponseEntity.ok(checkOutService.getActiveByStudent(studentId));
+    }
 }
