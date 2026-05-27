@@ -1,6 +1,7 @@
 package com.unimag.unimagleisureinventory.repositories.logs;
 
 import com.unimag.unimagleisureinventory.model.enums.ReservationStatus;
+import com.unimag.unimagleisureinventory.model.enums.Role;
 import com.unimag.unimagleisureinventory.model.reservation.ReservationStatusLogs;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,4 +20,13 @@ public interface ReservationStatusLogsRepository extends JpaRepository<Reservati
 
     List<ReservationStatusLogs> findByNewStatusAndRecordedAtBetween(
             ReservationStatus status, LocalDateTime from, LocalDateTime to);
+
+    @Query("SELECT l FROM ReservationStatusLogs l WHERE " +
+            "(:from IS NULL OR l.recordedAt >= :from) AND " +
+            "(:to IS NULL OR l.recordedAt <= :to) AND " +
+            "(:role IS NULL OR l.triggeredBy.role = :role) AND " +
+            "(:newStatus IS NULL OR l.newStatus = :newStatus)")
+    List<ReservationStatusLogs> findWithFilters(
+            LocalDateTime from, LocalDateTime to,
+            Role role, ReservationStatus newStatus);
 }
