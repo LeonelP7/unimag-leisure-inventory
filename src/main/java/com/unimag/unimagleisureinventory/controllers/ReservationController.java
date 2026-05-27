@@ -70,4 +70,11 @@ public class ReservationController {
             @Valid @RequestBody ApproveReservationRequestDTO request) {
         return ResponseEntity.ok(reservationService.approve(id, request));
     }
+
+    @GetMapping("/student/{studentId}/pending")
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
+    public ResponseEntity<ReservationResponseDTO> getPendingByStudent(
+            @PathVariable Long studentId) {
+        return ResponseEntity.ok(reservationService.getPendingByStudent(studentId));
+    }
 }

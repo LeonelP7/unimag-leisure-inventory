@@ -14,4 +14,5 @@ public interface ReservationService {
     ReservationResponseDTO verify(UUID reservationId);
     ReservationResponseDTO approve(UUID reservationId, ApproveReservationRequestDTO request);
     ReservationResponseDTO getById(UUID id);
+    ReservationResponseDTO getPendingByStudent(Long studentId);
 }

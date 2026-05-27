@@ -129,4 +129,9 @@ public class ReservationServiceImpl implements ReservationService {
 
         return reservationMapper.toResponseDTO(saved);
     }
+
+    @Override
+    public ReservationResponseDTO getPendingByStudent(Long studentId) {
+        return reservationRepository.findByStudentIdAndStatus(studentId, ReservationStatus.PENDING).stream().map(reservationMapper::toResponseDTO).findFirst().orElse(null);
+    }
 }
