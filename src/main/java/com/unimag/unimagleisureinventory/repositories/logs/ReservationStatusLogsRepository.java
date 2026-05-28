@@ -22,10 +22,10 @@ public interface ReservationStatusLogsRepository extends JpaRepository<Reservati
             ReservationStatus status, LocalDateTime from, LocalDateTime to);
 
     @Query("SELECT l FROM ReservationStatusLogs l WHERE " +
-            "(:from IS NULL OR l.recordedAt >= :from) AND " +
-            "(:to IS NULL OR l.recordedAt <= :to) AND " +
-            "(:role IS NULL OR l.triggeredBy.role = :role) AND " +
-            "(:newStatus IS NULL OR l.newStatus = :newStatus)")
+            "(cast(:from as java.time.LocalDateTime) IS NULL OR l.recordedAt >= :from) AND " +
+            "(cast(:to as java.time.LocalDateTime)IS NULL OR l.recordedAt <= :to) AND " +
+            "(cast(:role as string) IS NULL OR l.triggeredBy.role = :role) AND " +
+            "(cast(:newStatus as string) IS NULL OR l.newStatus = :newStatus)")
     List<ReservationStatusLogs> findWithFilters(
             LocalDateTime from, LocalDateTime to,
             Role role, ReservationStatus newStatus);

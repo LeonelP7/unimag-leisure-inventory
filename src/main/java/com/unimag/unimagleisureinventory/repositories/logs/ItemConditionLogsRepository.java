@@ -22,10 +22,10 @@ public interface ItemConditionLogsRepository extends JpaRepository<ItemCondigion
             ItemCondition condition, LocalDateTime from, LocalDateTime to);
 
     @Query("SELECT l FROM ItemCondigionLogs l WHERE " +
-            "(:from IS NULL OR l.recordedAt >= :from) AND " +
-            "(:to IS NULL OR l.recordedAt <= :to) AND " +
-            "(:role IS NULL OR l.registeredBy.role = :role) AND " +
-            "(:newCondition IS NULL OR l.newCondition = :newCondition)")
+            "(cast(:from as java.time.LocalDateTime) IS NULL OR l.recordedAt >= :from) AND " +
+            "(cast(:to as java.time.LocalDateTime) IS NULL OR l.recordedAt <= :to) AND " +
+            "(cast(:role as string) IS NULL OR l.registeredBy.role = :role) AND " +
+            "(cast(:newCondition as string) IS NULL OR l.newCondition = :newCondition)")
     List<ItemCondigionLogs> findWithFilters(
             LocalDateTime from, LocalDateTime to,
             Role role, ItemCondition newCondition);
