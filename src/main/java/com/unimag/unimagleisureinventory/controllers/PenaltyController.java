@@ -41,17 +41,6 @@ public class PenaltyController {
         return ResponseEntity.ok(penaltyService.getById(id));
     }
 
-    @GetMapping()
-    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
-    @Operation(summary = "Get all penalties", description = "Returns a list of all sanctions registered in the system (RF-29)")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Penalties retrieved successfully"),
-            @ApiResponse(responseCode = "403", description = "Insufficient permissions")
-    })
-    public ResponseEntity<List<PenaltyResponseDTO>> getAll() {
-        return ResponseEntity.ok(penaltyService.getAll());
-    }
-
     // RF-21/RF-22 — activar sanción
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
