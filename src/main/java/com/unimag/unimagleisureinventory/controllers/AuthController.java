@@ -8,6 +8,10 @@ import com.unimag.unimagleisureinventory.model.enums.Role;
 import com.unimag.unimagleisureinventory.model.person.Person;
 import com.unimag.unimagleisureinventory.services.UserService;
 import com.unimag.unimagleisureinventory.services.impl.AuthServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Tag(name = "Authentication", description = "Endpoints for user authentication")
 public class AuthController {
 
     private final AuthServiceImpl authService;
@@ -25,6 +30,11 @@ public class AuthController {
 
     @PostMapping("/login")
     @PreAuthorize("isAnonymous() or isAuthenticated()")
+    @Operation(summary = "Login", description = "Authenticate user credentials and return a JWT token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Login successful, JWT token returned"),
+            @ApiResponse(responseCode = "401", description = "Invalid credentials")
+    })
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO request) {
         return ResponseEntity.ok(authService.login(request));
     }

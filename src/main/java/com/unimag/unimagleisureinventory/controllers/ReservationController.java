@@ -6,6 +6,10 @@ import com.unimag.unimagleisureinventory.dtos.reservation.ApproveReservationRequ
 import com.unimag.unimagleisureinventory.dtos.reservation.CreateReservationRequestDTO;
 import com.unimag.unimagleisureinventory.dtos.reservation.ReservationResponseDTO;
 import com.unimag.unimagleisureinventory.services.ReservationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +24,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/reservations")
 @RequiredArgsConstructor
+@Tag(name = "Reservations", description = "Endpoints for managing item reservations")
 public class ReservationController {
 
     private final ReservationService reservationService;
@@ -27,12 +32,22 @@ public class ReservationController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK', 'STUDENT')")
+    @Operation(summary = "Get reservation by ID", description = "Returns a single reservation by its UUID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Reservation found"),
+            @ApiResponse(responseCode = "404", description = "Reservation not found")
+    })
     public ResponseEntity<ReservationResponseDTO> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(reservationService.getById(id));
     }
 
     @PostMapping
     @PreAuthorize("hasRole('STUDENT')")
+    @Operation(summary = "Create reservation", description = "Creates a new reservation for the authenticated student")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Reservation created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body")
+    })
     public ResponseEntity<ReservationResponseDTO> create(
             @Valid @RequestBody CreateReservationRequestDTO request,
             HttpServletRequest httpRequest) {
@@ -42,6 +57,10 @@ public class ReservationController {
 
     @GetMapping("/my")
     @PreAuthorize("hasRole('STUDENT')")
+    @Operation(summary = "Get my reservations", description = "Returns all reservations for the authenticated student")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Reservations retrieved successfully")
+    })
     public ResponseEntity<List<ReservationResponseDTO>> getMyReservations(
             HttpServletRequest httpRequest) {
         return ResponseEntity.ok(
@@ -50,6 +69,11 @@ public class ReservationController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('STUDENT')")
+    @Operation(summary = "Cancel reservation", description = "Cancels a reservation belonging to the authenticated student")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Reservation cancelled successfully"),
+            @ApiResponse(responseCode = "404", description = "Reservation not found")
+    })
     public ResponseEntity<Void> cancel(
             @PathVariable UUID id,
             HttpServletRequest httpRequest) {
@@ -59,12 +83,23 @@ public class ReservationController {
 
     @GetMapping("/{id}/verify")
     @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
+    @Operation(summary = "Verify reservation", description = "Verifies the validity of a reservation before checkout")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Reservation verified successfully"),
+            @ApiResponse(responseCode = "404", description = "Reservation not found")
+    })
     public ResponseEntity<ReservationResponseDTO> verify(@PathVariable UUID id) {
         return ResponseEntity.ok(reservationService.verify(id));
     }
 
     @PutMapping("/{id}/approve")
     @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
+    @Operation(summary = "Approve reservation", description = "Approves a pending reservation and assigns items")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Reservation approved successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "404", description = "Reservation not found")
+    })
     public ResponseEntity<ReservationResponseDTO> approve(
             @PathVariable UUID id,
             @Valid @RequestBody ApproveReservationRequestDTO request) {
