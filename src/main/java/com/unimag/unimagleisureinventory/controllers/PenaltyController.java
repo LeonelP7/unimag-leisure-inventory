@@ -4,6 +4,7 @@ import com.unimag.unimagleisureinventory.config.security.SecurityUtils;
 import com.unimag.unimagleisureinventory.dtos.penalty.CreatePenaltyRequestDTO;
 import com.unimag.unimagleisureinventory.dtos.penalty.PenaltyResponseDTO;
 import com.unimag.unimagleisureinventory.dtos.penalty.ResolvePenaltyRequestDTO;
+import com.unimag.unimagleisureinventory.mappers.PenaltyMapper;
 import com.unimag.unimagleisureinventory.services.PenaltyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -40,6 +41,13 @@ public class PenaltyController {
         return ResponseEntity.ok(penaltyService.getById(id));
     }
 
+    @GetMapping()
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
+    public ResponseEntity<List<PenaltyResponseDTO>> getAll() {
+        return ResponseEntity.ok(penaltyService.getAll());
+    }
+
+    // RF-21/RF-22 — activar sanción
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
     @Operation(summary = "Create penalty", description = "Activates a new sanction for a student (RF-21/RF-22)")

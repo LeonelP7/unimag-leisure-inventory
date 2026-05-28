@@ -13,4 +13,5 @@ public interface PenaltyService {
     List<PenaltyResponseDTO> getByStudent(Long studentId);
     boolean hasActivePenalty(Long studentId);
     PenaltyResponseDTO getById(UUID id);
+    List<PenaltyResponseDTO> getAll();
 }
