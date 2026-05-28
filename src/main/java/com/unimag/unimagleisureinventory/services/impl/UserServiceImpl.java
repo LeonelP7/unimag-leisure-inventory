@@ -113,4 +113,11 @@ public class UserServiceImpl implements UserService {
     public StudentResponseDTO getStudentById(Long StudentId) {
         return studentRepository.findById(StudentId).map(studentMapper::toResponseDTO).orElse(null);
     }
+
+    public List<PersonResponseDTO> getAll() {
+        return personRepository.findAll()
+                .stream()
+                .map(personMapper::toResponseDTO)
+                .toList();
+    }
 }

@@ -18,4 +18,5 @@ public interface UserService {
     PersonResponseDTO getById(UUID id);
     List<StudentResponseDTO> searchStudents(String query);
     StudentResponseDTO getStudentById(Long StudentId);
+    List<PersonResponseDTO> getAll();
 }

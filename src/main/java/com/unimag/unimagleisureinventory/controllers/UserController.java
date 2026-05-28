@@ -101,4 +101,15 @@ public class UserController {
         userService.deletePerson(personId);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Get all users", description = "Returns all users regardless of role")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Users retrieved successfully"),
+            @ApiResponse(responseCode = "403", description = "Insufficient permissions")
+    })
+    public ResponseEntity<List<PersonResponseDTO>> getAll() {
+        return ResponseEntity.ok(userService.getAll());
+    }
 }
