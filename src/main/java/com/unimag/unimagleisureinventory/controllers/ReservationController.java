@@ -5,6 +5,7 @@ import com.unimag.unimagleisureinventory.config.security.SecurityUtils;
 import com.unimag.unimagleisureinventory.dtos.reservation.ApproveReservationRequestDTO;
 import com.unimag.unimagleisureinventory.dtos.reservation.CreateReservationRequestDTO;
 import com.unimag.unimagleisureinventory.dtos.reservation.ReservationResponseDTO;
+import com.unimag.unimagleisureinventory.model.enums.ReservationStatus;
 import com.unimag.unimagleisureinventory.services.ReservationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -108,8 +109,26 @@ public class ReservationController {
 
     @GetMapping("/student/{studentId}/pending")
     @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
+    @Operation(summary = "Get pending reservation by student", description = "Returns the current pending reservation for a specific student")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Pending reservation found"),
+            @ApiResponse(responseCode = "404", description = "No pending reservation found for this student"),
+            @ApiResponse(responseCode = "403", description = "Insufficient permissions")
+    })
     public ResponseEntity<ReservationResponseDTO> getPendingByStudent(
             @PathVariable Long studentId) {
         return ResponseEntity.ok(reservationService.getPendingByStudent(studentId));
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
+    @Operation(summary = "Get all reservations", description = "Returns all reservations with optional filter by status")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Reservations retrieved successfully"),
+            @ApiResponse(responseCode = "403", description = "Insufficient permissions")
+    })
+    public ResponseEntity<List<ReservationResponseDTO>> getAll(
+            @RequestParam(required = false) ReservationStatus status) {
+        return ResponseEntity.ok(reservationService.getAll(status));
     }
 }

@@ -28,4 +28,6 @@ public interface PenaltyRepository extends JpaRepository<Penalty, UUID> {
     List<Penalty> findByPenaltyTypeId(UUID penaltyTypeId);
 
     List<Penalty> findByStartDateBetween(LocalDateTime from, LocalDateTime to);
+
+    List<Penalty> findByPenaltyStatus(PenaltyStatus status);
 }

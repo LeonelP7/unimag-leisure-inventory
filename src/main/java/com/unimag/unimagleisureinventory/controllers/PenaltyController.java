@@ -4,7 +4,7 @@ import com.unimag.unimagleisureinventory.config.security.SecurityUtils;
 import com.unimag.unimagleisureinventory.dtos.penalty.CreatePenaltyRequestDTO;
 import com.unimag.unimagleisureinventory.dtos.penalty.PenaltyResponseDTO;
 import com.unimag.unimagleisureinventory.dtos.penalty.ResolvePenaltyRequestDTO;
-import com.unimag.unimagleisureinventory.mappers.PenaltyMapper;
+import com.unimag.unimagleisureinventory.model.enums.PenaltyStatus;
 import com.unimag.unimagleisureinventory.services.PenaltyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -43,6 +43,11 @@ public class PenaltyController {
 
     @GetMapping()
     @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
+    @Operation(summary = "Get all penalties", description = "Returns a list of all sanctions registered in the system (RF-29)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Penalties retrieved successfully"),
+            @ApiResponse(responseCode = "403", description = "Insufficient permissions")
+    })
     public ResponseEntity<List<PenaltyResponseDTO>> getAll() {
         return ResponseEntity.ok(penaltyService.getAll());
     }
@@ -106,5 +111,17 @@ public class PenaltyController {
     })
     public ResponseEntity<Boolean> hasActivePenalty(@PathVariable Long studentId) {
         return ResponseEntity.ok(penaltyService.hasActivePenalty(studentId));
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
+    @Operation(summary = "Get all penalties", description = "Returns all sanctions with optional filter by status")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Penalties retrieved successfully"),
+            @ApiResponse(responseCode = "403", description = "Insufficient permissions")
+    })
+    public ResponseEntity<List<PenaltyResponseDTO>> getAll(
+            @RequestParam(required = false) PenaltyStatus status) {
+        return ResponseEntity.ok(penaltyService.getAll(status));
     }
 }

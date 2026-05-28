@@ -3,6 +3,7 @@ package com.unimag.unimagleisureinventory.services;
 import com.unimag.unimagleisureinventory.dtos.reservation.ApproveReservationRequestDTO;
 import com.unimag.unimagleisureinventory.dtos.reservation.CreateReservationRequestDTO;
 import com.unimag.unimagleisureinventory.dtos.reservation.ReservationResponseDTO;
+import com.unimag.unimagleisureinventory.model.enums.ReservationStatus;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,4 +16,5 @@ public interface ReservationService {
     ReservationResponseDTO approve(UUID reservationId, ApproveReservationRequestDTO request);
     ReservationResponseDTO getById(UUID id);
     ReservationResponseDTO getPendingByStudent(Long studentId);
+    List<ReservationResponseDTO> getAll(ReservationStatus status);
 }

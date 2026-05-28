@@ -4,6 +4,7 @@ import com.unimag.unimagleisureinventory.config.security.SecurityUtils;
 import com.unimag.unimagleisureinventory.dtos.checkout.CheckInRequestDTO;
 import com.unimag.unimagleisureinventory.dtos.checkout.CheckOutResponseDTO;
 import com.unimag.unimagleisureinventory.dtos.checkout.CreateCheckOutRequestDTO;
+import com.unimag.unimagleisureinventory.model.enums.CheckOutStatus;
 import com.unimag.unimagleisureinventory.services.CheckOutService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,11 +13,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -92,8 +95,27 @@ public class CheckOutController {
 
     @GetMapping("/student/{studentId}/active")
     @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
+    @Operation(summary = "Get active checkout by student", description = "Returns the current active loan for a specific student")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Active checkout found"),
+            @ApiResponse(responseCode = "404", description = "No active checkout found for this student"),
+            @ApiResponse(responseCode = "403", description = "Insufficient permissions")
+    })
     public ResponseEntity<CheckOutResponseDTO> getActiveByStudent(
             @PathVariable Long studentId) {
         return ResponseEntity.ok(checkOutService.getActiveByStudent(studentId));
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
+    @Operation(summary = "Get all checkouts", description = "Returns all loans with optional filters by status and start date")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Checkouts retrieved successfully"),
+            @ApiResponse(responseCode = "403", description = "Insufficient permissions")
+    })
+    public ResponseEntity<List<CheckOutResponseDTO>> getAll(
+            @RequestParam(required = false) CheckOutStatus status,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from) {
+        return ResponseEntity.ok(checkOutService.getAll(status, from));
     }
 }

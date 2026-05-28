@@ -28,4 +28,8 @@ public interface CheckOutRepository extends JpaRepository<CheckOut, UUID> {
     boolean existsByItemIdAndStatus(UUID itemId, CheckOutStatus status);
 
     List<CheckOut> findByCheckOutDateBetween(LocalDateTime from, LocalDateTime to);
+
+    List<CheckOut> findByStatus(CheckOutStatus status);
+
+    List<CheckOut> findByStatusAndCheckOutDateAfter(CheckOutStatus status, LocalDateTime from);
 }

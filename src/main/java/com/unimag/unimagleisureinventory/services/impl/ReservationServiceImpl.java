@@ -134,4 +134,12 @@ public class ReservationServiceImpl implements ReservationService {
     public ReservationResponseDTO getPendingByStudent(Long studentId) {
         return reservationRepository.findByStudentIdAndStatus(studentId, ReservationStatus.PENDING).stream().map(reservationMapper::toResponseDTO).findFirst().orElse(null);
     }
+
+    public List<ReservationResponseDTO> getAll(ReservationStatus status) {
+        List<Reservation> results = status != null
+                ? reservationRepository.findByStatus(status)
+                : reservationRepository.findAll();
+
+        return results.stream().map(reservationMapper::toResponseDTO).toList();
+    }
 }

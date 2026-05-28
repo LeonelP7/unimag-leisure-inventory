@@ -114,4 +114,12 @@ public class PenaltyServiceImpl implements PenaltyService {
         return penaltyRepository.existsByStudentIdAndStatus(
                 studentId, PenaltyStatus.ACTIVE);
     }
+
+    public List<PenaltyResponseDTO> getAll(PenaltyStatus status) {
+        List<Penalty> results = status != null
+                ? penaltyRepository.findByPenaltyStatus(status)
+                : penaltyRepository.findAll();
+
+        return results.stream().map(penaltyMapper::toResponseDTO).toList();
+    }
 }

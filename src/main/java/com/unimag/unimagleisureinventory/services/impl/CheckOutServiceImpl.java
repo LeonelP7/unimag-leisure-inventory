@@ -207,4 +207,18 @@ public class CheckOutServiceImpl implements CheckOutService {
                 .map(checkOutMapper::toResponseDTO)
                 .orElse(null);
     }
+
+    public List<CheckOutResponseDTO> getAll(CheckOutStatus status, LocalDateTime from) {
+        List<CheckOut> results;
+
+        if (status != null && from != null) {
+            results = checkOutRepository.findByStatusAndCheckOutDateAfter(status, from);
+        } else if (status != null) {
+            results = checkOutRepository.findByStatus(status);
+        } else {
+            results = checkOutRepository.findAll();
+        }
+
+        return results.stream().map(checkOutMapper::toResponseDTO).toList();
+    }
 }

@@ -26,4 +26,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID> 
     // RF-07 — verificar si el estudiante ya tiene un préstamo activo antes de nueva reserva
     @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM Reservation r WHERE r.student.studentId = :studentId AND r.status = :status")
     boolean existsByStudentIdAndStatus(Long studentId, ReservationStatus status);
+
+    List<Reservation> findByStatus(ReservationStatus status);
 }
