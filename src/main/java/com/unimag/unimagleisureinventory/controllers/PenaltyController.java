@@ -4,6 +4,7 @@ import com.unimag.unimagleisureinventory.config.security.SecurityUtils;
 import com.unimag.unimagleisureinventory.dtos.penalty.CreatePenaltyRequestDTO;
 import com.unimag.unimagleisureinventory.dtos.penalty.PenaltyResponseDTO;
 import com.unimag.unimagleisureinventory.dtos.penalty.ResolvePenaltyRequestDTO;
+import com.unimag.unimagleisureinventory.mappers.PenaltyMapper;
 import com.unimag.unimagleisureinventory.services.PenaltyService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -28,6 +29,12 @@ public class PenaltyController {
     @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
     public ResponseEntity<PenaltyResponseDTO> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(penaltyService.getById(id));
+    }
+
+    @GetMapping()
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_CLERK')")
+    public ResponseEntity<List<PenaltyResponseDTO>> getAll() {
+        return ResponseEntity.ok(penaltyService.getAll());
     }
 
     // RF-21/RF-22 — activar sanción

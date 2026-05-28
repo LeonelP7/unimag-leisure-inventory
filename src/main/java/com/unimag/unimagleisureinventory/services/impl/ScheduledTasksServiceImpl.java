@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,6 +32,7 @@ public class ScheduledTasksServiceImpl implements ScheduledTasksService {
 
     // Se ejecuta cada 5 minutos
     @Scheduled(fixedRate = 300000)
+    @Transactional
     public void checkOverdueCheckOuts() {
         log.info("Running overdue checkout check at {}", LocalDateTime.now());
 

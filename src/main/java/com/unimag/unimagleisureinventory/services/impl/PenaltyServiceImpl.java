@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +42,11 @@ public class PenaltyServiceImpl implements PenaltyService {
                 penaltyRepository.findById(id)
                         .orElseThrow(() -> new ResourceNotFoundException("Penalty not found"))
         );
+    }
+
+    @Override
+    public List<PenaltyResponseDTO> getAll() {
+        return penaltyRepository.findAll().stream().map(penaltyMapper::toResponseDTO).toList();
     }
 
     // RF-21/RF-22 — activar sanción manualmente
